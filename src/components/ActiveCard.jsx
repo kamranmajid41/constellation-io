@@ -1,0 +1,213 @@
+import { useState } from 'react';
+import JSZip from 'jszip';
+import {
+  IconStopwatch,
+  IconUpload,
+  IconEye,
+} from '@tabler/icons-react';
+import {
+  Box,
+  ActionIcon,
+  FileInput,
+  Card,
+  Text,
+  Group,
+  Stack,
+  CloseButton,
+} from '@mantine/core';
+import { notifications } from '@mantine/notifications';
+
+function ActiveCard({ activePanel, setActivePanel }) {
+
+
+    const [files, setFiles] = useState({
+        tle: null,
+        groundTopology: null,
+        circuits: null,
+        kmz: null,
+      });      
+    
+    
+      // ─── Handlers ─────────────────────────────────────────────────────────────
+      const handleTleUpload = (file) => {
+        setFiles((prev) => ({ ...prev, tle: file }));
+        if (!file) {
+          setCustomTleData(null);
+          return;
+        }
+    
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          try {
+            const data = JSON.parse(e.target.result);
+            const isValid = Array.isArray(data) && data.every(
+              (item) =>
+                typeof item === 'object' &&
+                typeof item.satelliteName === 'string' &&
+                typeof item.tleLine1 === 'string' &&
+                typeof item.tleLine2 === 'string'
+            );
+    
+            if (isValid) {
+              setCustomTleData(data);
+              notifications.show({
+                title: 'TLE Upload Success',
+                message: 'Custom TLE constellation loaded successfully.',
+                color: 'green',
+              });
+            } else {
+              throw new Error('Invalid TLE format');
+            }
+          } catch (err) {
+            console.error('TLE Parsing Error:', err);
+            notifications.show({
+              title: 'Invalid TLE JSON',
+              message: 'Expected an array of objects with satelliteName, tleLine1, tleLine2.',
+              color: 'red',
+            });
+            setCustomTleData(null);
+            setFiles((prev) => ({ ...prev, tle: null }));
+          }
+        };
+    
+        reader.readAsText(file);
+      };
+    
+      const handleKmzUpload = async (file) => {
+        setFiles((prev) => ({ ...prev, kmz: file }));
+        if (!file) {
+          setFlightTrajectoryData([]);
+          return;
+        }
+    
+        try {
+          const zip = await JSZip.loadAsync(file);
+          const kmlEntry = Object.values(zip.files).find(
+            (f) => f.name.toLowerCase().endsWith('.kml') && !f.dir
+          );
+    
+          if (!kmlEntry) throw new Error('No KML file found inside KMZ.');
+    
+          const kmlText = await kmlEntry.async('text');
+          const kml = new DOMParser().parseFromString(kmlText, 'application/xml');
+          const coords = [];
+    
+          kml.querySelectorAll('LineString').forEach((line) => {
+            const coordText = line.querySelector('coordinates')?.textContent || '';
+            const points = coordText.trim().split(/\s+/).map((coord) => {
+              const [lon, lat, alt] = coord.split(',').map(Number);
+              return { lon, lat, alt: alt || 0 };
+            });
+            coords.push(...points);
+          });
+    
+          if (coords.length) {
+            setFlightTrajectoryData(coords);
+            notifications.show({
+              title: 'KMZ Upload Success',
+              message: `Loaded ${coords.length} trajectory points.`,
+              color: 'green',
+            });
+          } else {
+            throw new Error('No coordinates found in KML LineString.');
+          }
+        } catch (err) {
+          console.error('KMZ Error:', err);
+          notifications.show({
+            title: 'KMZ Processing Failed',
+            message: err.message,
+            color: 'red',
+          });
+          setFlightTrajectoryData([]);
+          setFiles((prev) => ({ ...prev, kmz: null }));
+        }
+      };
+    
+      const handleJsonFileChange = (key) => (file) => {
+        setFiles((prev) => ({ ...prev, [key]: file }));
+      };
+
+
+    return ( 
+    <>
+      {activePanel && (
+        <Card
+          shadow="sm"
+          padding="md"
+          radius="md"
+          withBorder
+          style={{
+            position: 'absolute',
+            bottom: 20,
+            right: 20,
+            width: 300,
+            zIndex: 999,
+          }}
+        >
+          <Group position="apart" mb="sm">
+            <Text fw={500} size="sm" transform="capitalize">{
+              activePanel === 'tle' ? "Upload constellation" : 
+              activePanel === 'groundTopology' ? "Upload ground stations" : 
+              activePanel === 'circuits' ? "Upload circuits" : 
+              activePanel === 'kmz' ? "Upload flight trajectory" : ""
+            }</Text>
+            <CloseButton onClick={() => setActivePanel(null)} size="sm" />
+          </Group>
+
+          <Stack spacing="sm">
+            {activePanel === 'tle' && (
+            <FileInput
+                placeholder="Upload TLE (.json)"
+                accept=".json"
+                value={files.tle}
+                onChange={handleTleUpload}
+                clearable
+            />
+            )}
+
+            {activePanel === 'groundTopology' && (
+            <FileInput
+                placeholder="Upload Ground Topology"
+                accept=".json"
+                value={files.groundTopology}
+                onChange={handleJsonFileChange('groundTopology')}
+                clearable
+            />
+            )}
+
+            {activePanel === 'circuits' && (
+            <FileInput
+                placeholder="Upload Circuits"
+                accept=".json"
+                value={files.circuits}
+                onChange={handleJsonFileChange('circuits')}
+                clearable
+            />
+            )}
+
+            {activePanel === 'kmz' && (
+            <FileInput
+                placeholder="Upload KMZ Trajectory"
+                accept=".kmz"
+                value={files.kmz}
+                onChange={handleKmzUpload}
+                clearable
+            />
+            )}
+
+
+            {activePanel === 'visibility' && (
+              <Text size="sm" c="dimmed">Visibility panel under construction.</Text>
+            )}
+
+            {activePanel === 'schedule' && (
+              <Text size="sm" c="dimmed">Schedule jobs panel under construction.</Text>
+            )}
+          </Stack>
+        </Card>
+      )}
+    </>
+    );
+}; 
+export default ActiveCard
+

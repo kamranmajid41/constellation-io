@@ -1,132 +1,186 @@
-import { useState } from 'react'; 
-import { useDisclosure } from '@mantine/hooks';
-import { IconStopwatch, IconSettings, IconUpload, IconEye} from '@tabler/icons-react';
-import { ActionIcon, Modal, Tabs, Box, FileInput, Text} from '@mantine/core'; 
+import { useState } from 'react';
+import JSZip from 'jszip';
+import {
+  IconStopwatch,
+  IconUpload,
+  IconEye,
+  IconSatellite, 
+  IconAntenna,
+  IconCircuitResistor,
+  IconRocket
+} from '@tabler/icons-react';
+import {
+  Box,
+  ActionIcon,
+  FileInput,
+  Card,
+  Text,
+  Group,
+  Stack,
+  CloseButton,
+} from '@mantine/core';
+import { notifications } from '@mantine/notifications';
 
-function Settings({ setCustomTleData }) {
-    const [opened, { open, close }] = useDisclosure(false);
 
-    const handleFileUpload = (file) => {
-        if (!file) {
-            return;
+function Settings({ setCustomTleData, setFlightTrajectoryData, activePanel, setActivePanel}) {
+  const [files, setFiles] = useState({
+    tle: null,
+    groundTopology: null,
+    circuits: null,
+    kmz: null,
+  });
+
+  const handleTleUpload = (file) => {
+    setFiles((prev) => ({ ...prev, tle: file }));
+    if (!file) {
+      setCustomTleData(null);
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const data = JSON.parse(e.target.result);
+        const isValid = Array.isArray(data) && data.every(
+          (item) =>
+            typeof item === 'object' &&
+            typeof item.satelliteName === 'string' &&
+            typeof item.tleLine1 === 'string' &&
+            typeof item.tleLine2 === 'string'
+        );
+
+        if (isValid) {
+          setCustomTleData(data);
+          notifications.show({
+            title: 'TLE Upload Success',
+            message: 'Custom TLE constellation loaded successfully.',
+            color: 'green',
+          });
+        } else {
+          throw new Error('Invalid TLE format');
         }
-
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            try {
-                const uploadedJson = JSON.parse(e.target.result);
-
-                const isValidTleJson = Array.isArray(uploadedJson) && uploadedJson.every(item =>
-                    typeof item === 'object' && item !== null &&
-                    typeof item.satelliteName === 'string' &&
-                    typeof item.tleLine1 === 'string' &&
-                    typeof item.tleLine2 === 'string'
-                );
-
-                if (isValidTleJson) {
-                    setCustomTleData(uploadedJson); 
-                    notifications.show({
-                        title: 'Success!',
-                        message: 'Custom constellation uploaded successfully. The map will update shortly.',
-                        color: 'green',
-                    });
-                } else {
-                    notifications.show({
-                        title: 'Invalid TLE JSON',
-                        message: 'The uploaded file does not appear to be a valid TLE JSON format. Please ensure it is an array of objects with "satelliteName", "tleLine1", and "tleLine2" properties.',
-                        color: 'red',
-                    });
-                }
-            } catch (error) {
-                console.error("Error parsing JSON:", error);
-                notifications.show({
-                    title: 'File Read Error',
-                    message: 'Could not read or parse the JSON file. Please ensure it is a valid JSON.',
-                    color: 'red',
-                });
-            }
-        };
-        reader.readAsText(file); 
+      } catch (err) {
+        console.error('TLE Parsing Error:', err);
+        notifications.show({
+          title: 'Invalid TLE JSON',
+          message: 'Expected an array of objects with satelliteName, tleLine1, tleLine2.',
+          color: 'red',
+        });
+        setCustomTleData(null);
+        setFiles((prev) => ({ ...prev, tle: null }));
+      }
     };
 
-    return (
-        <>
-            <ActionIcon
-                variant="filled"
-                style={{
-                    position: 'absolute',
-                    top: 10,
-                    right: 10,
-                    zIndex: 10,
-                    backgroundColor: '#000',
-                    color: '#fff',
-                }}
-                onClick={open}
-            >
-                <IconSettings size={24} />
-            </ActionIcon>
+    reader.readAsText(file);
+  };
 
-            <Modal
-                opened={opened}
-                onClose={close}
-                fullScreen
-                title={<IconSettings size={24} />}
-            >
-                <Tabs defaultValue="inputs">
-                    <Tabs.List>
-                        <Tabs.Tab value="inputs" leftSection={<IconUpload size={18} />}>Inputs</Tabs.Tab>
-                        <Tabs.Tab value="visibility" leftSection={<IconEye size={18} />}>Control Visibility</Tabs.Tab>
-                        <Tabs.Tab value="outputs" leftSection={<IconStopwatch size={18} />}>Schedule Jobs</Tabs.Tab>
-                    </Tabs.List>
+  const handleKmzUpload = async (file) => {
+    setFiles((prev) => ({ ...prev, kmz: file }));
+    if (!file) {
+      setFlightTrajectoryData([]);
+      return;
+    }
 
-                    <Tabs.Panel value="inputs" pt="xs">
-                        <Box mt="md">
-                            <Text size="sm" mb="xs" fw={500}>Upload TLE Constellation:</Text>
-                            <FileInput
-                                placeholder="No file selected"
-                                accept=".json" 
-                                onChange={handleFileUpload}
-                                icon={<IconUpload size={16} />}
-                                clearable
-                            />
-                            <Text size="xs" color="dimmed" mt="xs">
-                                Accepts JSON files with an array of satellite objects. Each object must have `satelliteName`, `tleLine1`, and `tleLine2`.
-                            </Text>
-                        </Box>
-                        <Box mt="md">
-                            <Text size="sm" mb="xs" fw={500}>Upload Ground Topology:</Text>
-                            <FileInput
-                                placeholder="No file selected"
-                                accept=".json" 
-                                icon={<IconUpload size={16} />}
-                                clearable
-                            />
-                            <Text size="xs" color="dimmed" mt="xs">
-                            </Text>
-                        </Box>
-                        <Box mt="md">
-                            <Text size="sm" mb="xs" fw={500}>Upload Circuits:</Text>
-                            <FileInput
-                                placeholder="No file selected"
-                                accept=".json" 
-                                icon={<IconUpload size={16} />}
-                                clearable
-                            />
-                            <Text size="xs" color="dimmed" mt="xs">
-                            </Text>
-                        </Box>
-                    </Tabs.Panel>
+    try {
+      const zip = await JSZip.loadAsync(file);
+      const kmlEntry = Object.values(zip.files).find(
+        (f) => f.name.toLowerCase().endsWith('.kml') && !f.dir
+      );
 
-                    <Tabs.Panel value="outputs" pt="xs">
-                        <Text>Under construction!</Text>
-                    </Tabs.Panel>
-                     <Tabs.Panel value="visibility" pt="xs">
-                        <Text>Under construction!</Text>
-                    </Tabs.Panel>
-                </Tabs>
-            </Modal>
-        </>
-    );
-};
+      if (!kmlEntry) throw new Error('No KML file found inside KMZ.');
+
+      const kmlText = await kmlEntry.async('text');
+      const kml = new DOMParser().parseFromString(kmlText, 'application/xml');
+      const coords = [];
+
+      kml.querySelectorAll('LineString').forEach((line) => {
+        const coordText = line.querySelector('coordinates')?.textContent || '';
+        const points = coordText.trim().split(/\s+/).map((coord) => {
+          const [lon, lat, alt] = coord.split(',').map(Number);
+          return { lon, lat, alt: alt || 0 };
+        });
+        coords.push(...points);
+      });
+
+      if (coords.length) {
+        setFlightTrajectoryData(coords);
+        notifications.show({
+          title: 'KMZ Upload Success',
+          message: `Loaded ${coords.length} trajectory points.`,
+          color: 'green',
+        });
+      } else {
+        throw new Error('No coordinates found in KML LineString.');
+      }
+    } catch (err) {
+      console.error('KMZ Error:', err);
+      notifications.show({
+        title: 'KMZ Processing Failed',
+        message: err.message,
+        color: 'red',
+      });
+      setFlightTrajectoryData([]);
+      setFiles((prev) => ({ ...prev, kmz: null }));
+    }
+  };
+
+  const handleJsonFileChange = (key) => (file) => {
+    setFiles((prev) => ({ ...prev, [key]: file }));
+  };
+
+  return (
+    <>
+      {/* Floating Icon Buttons */}
+      <Stack
+        spacing="xs"
+        position="left"
+        
+      >
+        <ActionIcon
+          variant={activePanel === 'tle' ? 'filled' : 'light'}
+          onClick={() => setActivePanel(activePanel === 'tle' ? null : 'tle')}
+          size="lg"
+        >
+          <IconSatellite size={18} />
+        </ActionIcon>
+        <ActionIcon
+          variant={activePanel === 'groundTopology' ? 'filled' : 'light'}
+          onClick={() => setActivePanel(activePanel === 'groundTopology' ? null : 'groundTopology')}
+          size="lg"
+        >
+          <IconAntenna size={18} />
+        </ActionIcon>
+        <ActionIcon
+          variant={activePanel === 'circuits' ? 'filled' : 'light'}
+          onClick={() => setActivePanel(activePanel === 'circuits' ? null : 'circuits')}
+          size="lg"
+        >
+          <IconCircuitResistor size={18} />
+        </ActionIcon>
+        <ActionIcon
+          variant={activePanel === 'kmz' ? 'filled' : 'light'}
+          onClick={() => setActivePanel(activePanel === 'kmz' ? null : 'kmz')}
+          size="lg"
+        >
+          <IconRocket size={18} />
+        </ActionIcon>
+        <ActionIcon
+          variant={activePanel === 'visibility' ? 'filled' : 'light'}
+          onClick={() => setActivePanel(activePanel === 'visibility' ? null : 'visibility')}
+          size="lg"
+        >
+          <IconEye size={18} />
+        </ActionIcon>
+        <ActionIcon
+          variant={activePanel === 'schedule' ? 'filled' : 'light'}
+          onClick={() => setActivePanel(activePanel === 'schedule' ? null : 'schedule')}
+          size="lg"
+        >
+          <IconStopwatch size={18} />
+        </ActionIcon>
+      </Stack>
+    </>
+  );
+}
 
 export default Settings;

@@ -3,14 +3,14 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "homepage": "https://kamranmajid41.github.io/constellation-io/", 
+  "homepage": "https://kamranmajid41.github.io/constellation-io/",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "predeploy": "npm run build", 
-    "deploy": "gh-pages -d dist"  
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist"
   },
   "dependencies": {
     "@mantine/core": "^8.0.2",
@@ -18,6 +18,7 @@
     "@mantine/notifications": "^8.0.2",
     "@tabler/icons-react": "^3.34.0",
     "@types/mapbox-gl": "^3.4.1",
+    "jszip": "^3.10.1",
     "mapbox-gl": "^3.12.0",
     "papaparse": "^5.5.3",
     "react": "^19.1.0",

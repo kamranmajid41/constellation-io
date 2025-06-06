@@ -1,19 +1,21 @@
-import { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import Map from 'react-map-gl/mapbox';
-import { Button, ActionIcon, Drawer, Box, Text, Group, Slider } from '@mantine/core'; // Import Drawer, Box, Text, Group, Slider
-import { useDisclosure } from '@mantine/hooks'; // Import useDisclosure for Drawer
-import { IconSettings, IconPlayerPlay, IconPlayerPause, IconClockHour4 } from '@tabler/icons-react'; // Import icons for play, pause, and clock
+import { Button, ActionIcon, TextInput, Group } from '@mantine/core';
+import { IconWorldDown, IconTargetArrow, IconSearch } from '@tabler/icons-react';
 
 import Satellites from './Satellites';
-import Settings from './Settings'; 
+import FlightTrajectoryLayer from './FlightTrajectory';
 
 let MAPBOX_TOKEN = "pk.eyJ1Ijoia21hamlkMjQiLCJhIjoiY21iZW15ZXB5MWlidTJycHhkbTQ2b2lidSJ9.KYEwuChvbNqoXeOpljFjIw";
 
 function Globe() {
   const mapRef = useRef(null);
-  const [mapLoaded, setMapLoaded] = useState(false);
   const [animationSpeed, setAnimationSpeed] = useState(1);
-  const [isPaused, setIsPaused] = useState(false); 
+  const [isPaused, setIsPaused] = useState(false);
+  const [flightTrajectoryData, setFlightTrajectoryData] = useState([]);
+  const [customTleData, setCustomTleData] = useState(null);
+  const [mapLoaded, setMapLoaded] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const initialViewState = {
     longitude: -122.4,
@@ -21,33 +23,55 @@ function Globe() {
     zoom: 2,
   };
 
-  const handleMapLoad = () => {
-    setMapLoaded(true);
-  };
-
   const resetMapView = () => {
     if (mapRef.current) {
       mapRef.current.jumpTo({
         center: [initialViewState.longitude, initialViewState.latitude],
         zoom: initialViewState.zoom,
-        pitch: 0
+        pitch: 0,
       });
     }
   };
 
-  const UTCClock = () => {
-    const [utcTime, setUtcTime] = useState('');
+  const handleMapLoad = () => {
+    setMapLoaded(true);
+  };
 
-    useEffect(() => {
-      const updateClock = () => {
-        setUtcTime(new Date().toUTCString().split(' ')[4]);
-      };
-      const intervalId = setInterval(updateClock, 1000);
-      updateClock(); // Initial call
-      return () => clearInterval(intervalId);
-    }, []);
+  const handleGeolocation = () => {
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const { latitude, longitude } = pos.coords;
+        if (mapRef.current) {
+          mapRef.current.flyTo({
+            center: [longitude, latitude],
+            zoom: 10,
+          });
+        }
+      },
+      (err) => {
+        alert('Unable to retrieve location: ' + err.message);
+      }
+    );
+  };
 
-    return <Text c='grey' component="span">{utcTime}</Text>;
+  const handleSearch = async () => {
+    if (!searchQuery) return;
+
+    const response = await fetch(
+      `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(searchQuery)}.json?access_token=${MAPBOX_TOKEN}`
+    );
+    const data = await response.json();
+    if (data.features && data.features.length > 0) {
+      const [lon, lat] = data.features[0].center;
+      if (mapRef.current) {
+        mapRef.current.flyTo({
+          center: [lon, lat],
+          zoom: 10,
+        });
+      }
+    } else {
+      alert('Location not found.');
+    }
   };
 
   return (
@@ -55,54 +79,58 @@ function Globe() {
       ref={mapRef}
       mapboxAccessToken={MAPBOX_TOKEN}
       initialViewState={initialViewState}
-      style={{ width: '100vw', height: '100vh' }}
+      style={{ height: '100vh', width: '98vw' }}
       mapStyle="mapbox://styles/kmajid24/cmbenh4hd004201ptfkp97j18"
       onLoad={handleMapLoad}
       attributionControl={false}
     >
       {mapLoaded && (
         <>
-          <Satellites animationSpeed={animationSpeed} isPaused={isPaused} /> {/* Pass animation speed and pause state */}
-          <Button
-            onClick={resetMapView}
-            variant="filled"
-            size="lg"
+          <Satellites
+            animationSpeed={animationSpeed}
+            isPaused={isPaused}
+            customTleData={customTleData}
+          />
+
+          <FlightTrajectoryLayer flightTrajectoryData={flightTrajectoryData} />
+
+          {/* Bottom buttons container */}
+          <div
             style={{
               position: 'absolute',
-              top: 5,
-              left: 0,
-              zIndex: 10,
-              padding: '10px 20px',
-              fontFamily: 'Courier New, Courier, monospace',
-              fontSize: '18px',
-              fontWeight: 'light',
-              backgroundColor: '#000',
-              color: '#fff',
+              bottom: 5,
+              left: 5,
+              display: 'flex',
+              gap: 6, 
+              alignItems: 'center',
+              backgroundColor: 'rgba(67, 67, 67, 0.9)',
+              padding: '6px',
+              borderRadius: '6px',
+              zIndex: 10000
             }}
           >
-            constellation-io
-          </Button>
-        
+            <ActionIcon variant="default" onClick={resetMapView} title="Reset View">
+              <IconWorldDown size={18}/>
+            </ActionIcon>
 
-          <Settings/>
+            <ActionIcon variant="default" onClick={handleGeolocation} title="Find My Location">
+              <IconTargetArrow  size={18}/>
+            </ActionIcon>
 
-          <Button
-          style={{
-              position: 'absolute',
-              bottom: 0,
-              left: 0,
-              zIndex: 100,
-              backgroundColor: '#000',
-              color: '#fff',
-            }}
-          >
-            <Group position="apart" align="center" mb="sm">
-              <IconClockHour4 size={15} color='grey'/>
-              <Text size="sm" weight={200}>
-                <UTCClock /> 
-              </Text>
-            </Group>
-          </Button>
+            <ActionIcon variant="default" onClick={handleSearch} title="Search">
+              <IconSearch  size={18}/>
+            </ActionIcon>
+
+            <TextInput
+              placeholder="Search..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.currentTarget.value)}
+              size='xs'
+              style={{ width: 100 }}
+            />
+
+          </div>
+
         </>
       )}
     </Map>

@@ -4,27 +4,24 @@ import * as satellite from 'satellite.js';
 
 import tleData from '../../scripts/starlink_tles.json';
 
-// Function to generate a circle (polygon) around a center point with a given radius
 const generateCircle = (latitude, longitude, radiusInDegrees = 0.1, numPoints = 12) => {
   const coordinates = [];
   for (let i = 0; i < numPoints; i++) {
-    const angle = (i / numPoints) * 2 * Math.PI; // Angle in radians
+    const angle = (i / numPoints) * 2 * Math.PI; 
     const latOffset = radiusInDegrees * Math.sin(angle);
     const lonOffset = radiusInDegrees * Math.cos(angle);
     coordinates.push([longitude + lonOffset, latitude + latOffset]);
   }
 
-  // Close the polygon by repeating the first point at the end
   coordinates.push(coordinates[0]);
   return coordinates;
 };
 
 const Satellites = () => {
   const [satellitePositions, setSatellitePositions] = useState([]);
-  const lastUpdateRef = useRef(0); // To store last update time to reduce frequency
-  const updateInterval = 10; // Update every 100 ms
+  const lastUpdateRef = useRef(0); 
+  const updateInterval = 10; 
 
-  // Function to calculate satellite position based on TLE data
   const getSatellitePosition = (tleLine1, tleLine2) => {
     if (!tleLine1 || !tleLine2) return null;
 
@@ -59,16 +56,13 @@ const Satellites = () => {
   };
 
   useEffect(() => {
-    // Store last update timestamp to manage update frequency
     const interval = setInterval(() => {
       const currentTime = Date.now();
 
-      // If last update was too recent, skip this update
       if (currentTime - lastUpdateRef.current < updateInterval) return;
 
       lastUpdateRef.current = currentTime;
 
-      // Only calculate and update positions for satellites if the position has changed
       const updatedPositions = tleData
         .map((satellite) => {
           const updatedPosition = getSatellitePosition(satellite.tleLine1, satellite.tleLine2);
@@ -76,10 +70,9 @@ const Satellites = () => {
         })
         .filter((position) => position !== null);
 
-      setSatellitePositions(updatedPositions); // Update the state with valid positions
-    }, updateInterval); // Reduce the update interval
+      setSatellitePositions(updatedPositions); 
+    }, updateInterval); 
 
-    // Cleanup interval on component unmount
     return () => clearInterval(interval);
   }, []);
 
@@ -94,7 +87,7 @@ const Satellites = () => {
               type: 'Feature',
               geometry: {
                 type: 'Polygon',
-                coordinates: [generateCircle(satellite.latitude, satellite.longitude)], // Create a circle as a polygon
+                coordinates: [generateCircle(satellite.latitude, satellite.longitude)],
               },
               properties: {
                 name: satellite.name,
@@ -106,10 +99,10 @@ const Satellites = () => {
           <Layer
             type="fill-extrusion"
             paint={{
-              'fill-extrusion-color': '#88f7f5', // Color of the extrusion
-              'fill-extrusion-height': 550 * 1000, // Extrusion height based on altitude
-              'fill-extrusion-base': 545 * 1000, // Base of the extrusion (on the ground)
-              'fill-extrusion-opacity': 0.9, // Opacity of the extrusion
+              'fill-extrusion-color': '#88f7f5', 
+              'fill-extrusion-height': 550 * 1000, 
+              'fill-extrusion-base': 545 * 1000, 
+              'fill-extrusion-opacity': 0.9, 
               'fill-extrusion-emissive-strength': 2
             }}
           />

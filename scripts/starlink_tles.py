@@ -12,7 +12,6 @@ def fetch_starlink_tles():
     tles = response.text.strip().split("\n")
     sat_list = []
 
-    # Process the TLE data
     for i in range(0, len(tles), 3):
         satellite_name = tles[i].strip()
         tle_line1 = tles[i+1].strip()
