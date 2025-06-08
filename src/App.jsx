@@ -6,6 +6,7 @@ import Globe from './components/Globe';
 import Settings from './components/Settings'; 
 import ActiveCard from './components/ActiveCard';
 import { useDisclosure } from '@mantine/hooks';
+import { GlobalProvider } from './context/GlobalContext';
 
 
 function App() {
@@ -36,32 +37,35 @@ function App() {
 
   return (
     <>
-    <AppShell
-      navbar={{ width: 66, breakpoint: 'sm', collapsed: { mobile: !opened } }}
-    >
-      <AppShell.Navbar p="md">
-        <Group>
-          <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" />
-          <UTCClock />
-        </Group>
-        <Space h='15pt'/>
-    
-        <Settings
-          setCustomTleData={setCustomTleData}
-          setFlightTrajectoryData={setFlightTrajectoryData}
-          setActivePanel={setActivePanel}
-          activePanel={activePanel}
-        />
-     
-      </AppShell.Navbar>
-      <AppShell.Main>
-        <Globe/>
-        <ActiveCard
-          activePanel={activePanel}
-          setActivePanel={setActivePanel}
-        />
-      </AppShell.Main>
-    </AppShell>
+      <GlobalProvider>
+        <AppShell
+          navbar={{ width: 66, breakpoint: 'sm', collapsed: { mobile: !opened } }}
+        >
+          <AppShell.Navbar p="md">
+            <Group>
+              <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" />
+              <UTCClock />
+            </Group>
+            <Space h='15pt'/>
+        
+            <Settings
+              setCustomTleData={setCustomTleData}
+              setFlightTrajectoryData={setFlightTrajectoryData}
+              setActivePanel={setActivePanel}
+              activePanel={activePanel}
+            />
+        
+          </AppShell.Navbar>
+          <AppShell.Main>
+            <Globe/>
+            <ActiveCard
+              activePanel={activePanel}
+              setActivePanel={setActivePanel}
+            />
+          </AppShell.Main>
+        </AppShell>
+
+      </GlobalProvider>
     </>
   );
 }

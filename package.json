@@ -17,6 +17,7 @@
     "@mantine/hooks": "^8.0.2",
     "@mantine/notifications": "^8.0.2",
     "@tabler/icons-react": "^3.34.0",
+    "@tanstack/react-virtual": "^3.13.9",
     "@types/mapbox-gl": "^3.4.1",
     "jszip": "^3.10.1",
     "mapbox-gl": "^3.12.0",

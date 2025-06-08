@@ -2,17 +2,24 @@ import React, { useState, useRef, useEffect } from 'react';
 import Map from 'react-map-gl/mapbox';
 import { Button, ActionIcon, TextInput, Group } from '@mantine/core';
 import { IconWorldDown, IconTargetArrow, IconSearch } from '@tabler/icons-react';
+import { useGlobalContext } from '../context/GlobalContext';
 
 import Satellites from './Satellites';
-import FlightTrajectoryLayer from './FlightTrajectory';
+import FlightTrajectory from './FlightTrajectory'; 
+import GroundStations from './GroundStations';
+import stations from '../data/satnogs_ground_stations.json';
 
 let MAPBOX_TOKEN = "pk.eyJ1Ijoia21hamlkMjQiLCJhIjoiY21iZW15ZXB5MWlidTJycHhkbTQ2b2lidSJ9.KYEwuChvbNqoXeOpljFjIw";
 
 function Globe() {
+
+  const { useDefaultConstellation, 
+          uploadedFlightGeoJson,
+          altitude, beamwidth
+        } = useGlobalContext();
   const mapRef = useRef(null);
   const [animationSpeed, setAnimationSpeed] = useState(1);
   const [isPaused, setIsPaused] = useState(false);
-  const [flightTrajectoryData, setFlightTrajectoryData] = useState([]);
   const [customTleData, setCustomTleData] = useState(null);
   const [mapLoaded, setMapLoaded] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -49,7 +56,10 @@ function Globe() {
         }
       },
       (err) => {
-        alert('Unable to retrieve location: ' + err.message);
+        // Use a custom message box instead of alert for better UI/UX
+        console.error('Unable to retrieve location: ' + err.message);
+        // You can implement a modal or toast notification here
+        // e.g., showNotification({ message: 'Unable to retrieve location: ' + err.message, color: 'red' });
       }
     );
   };
@@ -70,7 +80,9 @@ function Globe() {
         });
       }
     } else {
-      alert('Location not found.');
+      // Use a custom message box instead of alert for better UI/UX
+      console.warn('Location not found for search query: ' + searchQuery);
+      // You can implement a modal or toast notification here
     }
   };
 
@@ -86,13 +98,27 @@ function Globe() {
     >
       {mapLoaded && (
         <>
-          <Satellites
-            animationSpeed={animationSpeed}
-            isPaused={isPaused}
-            customTleData={customTleData}
+          {useDefaultConstellation && 
+
+            <Satellites
+              animationSpeed={animationSpeed}
+              isPaused={isPaused}
+              customTleData={customTleData}
+            />}
+
+          <FlightTrajectory
+            geojsonSource={uploadedFlightGeoJson}
+            heatmapConfig={{
+              altitudeKey: 'altitude_meters',
+              beamwidthKey: 'antenna_beamwidth_deg',
+              defaultAltitude: {altitude},
+              defaultBeamwidth: {beamwidth},
+              weightCalculator: (beamwidth, altitude) => (beamwidth / (altitude + 1)) ** 1.5
+            }}
           />
 
-          <FlightTrajectoryLayer flightTrajectoryData={flightTrajectoryData} />
+          <GroundStations geojsonSource={stations} />
+
 
           {/* Bottom buttons container */}
           <div
@@ -126,7 +152,7 @@ function Globe() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.currentTarget.value)}
               size='xs'
-              style={{ width: 100 }}
+              style={{ width: 150 }}
             />
 
           </div>

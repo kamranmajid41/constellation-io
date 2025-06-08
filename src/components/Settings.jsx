@@ -18,6 +18,7 @@ import {
   Group,
   Stack,
   CloseButton,
+  Image
 } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 
@@ -130,12 +131,12 @@ function Settings({ setCustomTleData, setFlightTrajectoryData, activePanel, setA
 
   return (
     <>
-      {/* Floating Icon Buttons */}
       <Stack
         spacing="xs"
         position="left"
         
       >
+       
         <ActionIcon
           variant={activePanel === 'tle' ? 'filled' : 'light'}
           onClick={() => setActivePanel(activePanel === 'tle' ? null : 'tle')}

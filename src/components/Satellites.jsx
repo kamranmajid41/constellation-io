@@ -103,7 +103,7 @@ const Satellites = () => {
               'fill-extrusion-height': 550 * 1000, 
               'fill-extrusion-base': 545 * 1000, 
               'fill-extrusion-opacity': 0.9, 
-              'fill-extrusion-emissive-strength': 2
+              'fill-extrusion-emissive-strength': 3
             }}
           />
         </Source>
