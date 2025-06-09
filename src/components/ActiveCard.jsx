@@ -20,6 +20,7 @@ import {
 import { notifications } from '@mantine/notifications';
 import { useGlobalContext } from '../context/GlobalContext';
 import GroundStationsCard from './GroundStationsCard';
+import Visibility from './Visibility';
 import stationData from '../data/satnogs_ground_stations.json';
 
 
@@ -30,7 +31,7 @@ function ActiveCard({ activePanel, setActivePanel }) {
           setCustomTleData, 
           beamwidth, setBeamwidth, 
           altitude, setAltitude,
-          enableDispersions, setEnableDispersions
+          setEnableDispersions, 
         } = useGlobalContext();
 
   const [files, setFiles] = useState({
@@ -267,7 +268,10 @@ function ActiveCard({ activePanel, setActivePanel }) {
               activePanel === 'tle' ? "Upload constellation" :
               activePanel === 'groundTopology' ? "Ground stations" :
               activePanel === 'circuits' ? "Upload circuits" :
-              activePanel === 'kmz' ? "Upload flight trajectories" : ""
+              activePanel === 'visibility' ? "Change visibility" :
+              activePanel === 'kmz' ? "Upload flight trajectories" : 
+              activePanel === 'schedule' ? "Schedule jobs" : 
+              ""
             }</Text>
             <CloseButton onClick={() => setActivePanel(null)} size="sm" />
           </Group>
@@ -346,7 +350,7 @@ function ActiveCard({ activePanel, setActivePanel }) {
 
 
             {activePanel === 'visibility' && (
-              <Text size="sm" c="dimmed">Visibility panel under construction.</Text>
+              <Visibility/>
             )}
 
             {activePanel === 'schedule' && (

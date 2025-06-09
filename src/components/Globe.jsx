@@ -15,8 +15,10 @@ function Globe() {
 
   const { useDefaultConstellation, 
           uploadedFlightGeoJson,
-          altitude, beamwidth
+          altitude, beamwidth,
+          showFlightTrajectory, showCircuits, showSatellites, showGroundStations
         } = useGlobalContext();
+
   const mapRef = useRef(null);
   const [animationSpeed, setAnimationSpeed] = useState(1);
   const [isPaused, setIsPaused] = useState(false);
@@ -98,15 +100,15 @@ function Globe() {
     >
       {mapLoaded && (
         <>
-          {useDefaultConstellation && 
-
+          {useDefaultConstellation && showSatellites && 
             <Satellites
               animationSpeed={animationSpeed}
               isPaused={isPaused}
               customTleData={customTleData}
-            />}
+          />}
 
-          <FlightTrajectory
+         { showFlightTrajectory && 
+         <FlightTrajectory
             geojsonSource={uploadedFlightGeoJson}
             heatmapConfig={{
               altitudeKey: 'altitude_meters',
@@ -115,9 +117,11 @@ function Globe() {
               defaultBeamwidth: {beamwidth},
               weightCalculator: (beamwidth, altitude) => (beamwidth / (altitude + 1)) ** 1.5
             }}
-          />
+          />}
 
-          <GroundStations geojsonSource={stations} />
+          {showGroundStations && 
+            <GroundStations geojsonSource={stations} />
+          }
 
 
           {/* Bottom buttons container */}
