@@ -6,12 +6,13 @@ import { useEffect, useState } from 'react';
 import ActiveCard from './components/ActiveCard';
 import Globe from './components/Globe';
 import Settings from './components/Settings';
+import { GlobalProvider } from './context/GlobalContext';
 
 function App() {
   const [opened, { toggle }] = useDisclosure();
   const [flightTrajectoryData, setFlightTrajectoryData] = useState([]);
   const [customTleData, setCustomTleData] = useState(null);
-  const [activePanel, setActivePanel] = useState(null); 
+  const [activePanel, setActivePanel] = useState(null);
 
   const UTCClock = () => {
     const [utcTime, setUtcTime] = useState('');
@@ -21,7 +22,7 @@ function App() {
         setUtcTime(new Date().toUTCString().split(' ')[4]);
       };
       const intervalId = setInterval(updateClock, 1000);
-      updateClock(); 
+      updateClock();
       return () => clearInterval(intervalId);
     }, []);
 
@@ -31,11 +32,10 @@ function App() {
         size="xs"
         weight={200}
         style={{
-          marginLeft: '-8px',
-          marginTop: '2px',
-          textAlign: 'left',
-          display: 'block',
-          marginBottom: '2px'
+          textAlign: 'center',
+          width: '100%',
+          marginTop: '-4px',
+          marginBottom: '-2px',
         }}
       >
         {utcTime}
@@ -44,7 +44,7 @@ function App() {
   };
 
   return (
-    <>
+    <GlobalProvider>
       <AppShell
         navbar={{ width: 66, breakpoint: 'sm', collapsed: { mobile: !opened } }}
       >
@@ -53,21 +53,21 @@ function App() {
             gap={8}
             style={{
               flexDirection: 'column',
-              alignItems: 'flex-start',
-              paddingLeft: '2px',
+              alignItems: 'center',
               width: '100%',
+              marginTop: '4px',
             }}
           >
             <img
               src="/constellation-io/2018Lebron.png"
               alt="LeBron Icon"
               style={{
-                width: '52px',             
+                width: '52px',
                 height: '52px',
                 objectFit: 'contain',
                 display: 'block',
-                marginLeft: '-8px',
-                marginBottom: '0px'
+                transform: 'translateX(-2px)',
+                marginBottom: '4px',
               }}
             />
             <UTCClock />
@@ -79,7 +79,7 @@ function App() {
             />
           </Group>
 
-          <Space h='12pt'/>
+          <Space h="12pt" />
           <Settings
             setCustomTleData={setCustomTleData}
             setFlightTrajectoryData={setFlightTrajectoryData}
@@ -96,7 +96,7 @@ function App() {
           />
         </AppShell.Main>
       </AppShell>
-    </>
+    </GlobalProvider>
   );
 }
 
