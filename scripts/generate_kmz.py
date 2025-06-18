@@ -175,13 +175,43 @@ def generate_dispersed_f9_flight_kmzs(
     print("These KMZ files represent various F9 flight ground tracks and can be used to generate a heatmap.")
     print("You can open these '.kmz' files in Google Earth Pro to view the individual trajectories.")
 
+def generate_js_index_file(kmz_dir: str, output_file: str = "src/data/trajectories/index.js"):
+    """
+    Generates a JavaScript index file listing KMZ files in a directory.
+
+    Args:
+        kmz_dir (str): Directory containing the KMZ files.
+        output_file (str): Path to the JS index file to be created.
+    """
+    entries = []
+
+    for fname in sorted(os.listdir(kmz_dir)):
+        if fname.lower().endswith(".kmz"):
+            label = fname.replace(".kmz", "").replace("_", " ")
+            entries.append({
+                "name": fname.replace(".kmz", ""),
+                "fileName": fname,
+                "label": label
+            })
+
+    js_content = "// Auto-generated index of available flight trajectories\n"
+    js_content += "const savedTrajectories = [\n"
+    for entry in entries:
+        js_content += f"  {{ name: '{entry['name']}', fileName: '{entry['fileName']}', label: '{entry['label']}' }},\n"
+    js_content += "];\n\nexport default savedTrajectories;\n"
+
+    os.makedirs(os.path.dirname(output_file), exist_ok=True)
+    with open(output_file, "w") as f:
+        f.write(js_content)
+
+    print(f"✅ JavaScript index file created at: {output_file}")
+
 if __name__ == "__main__":
-    # Example usage:
-    # This will create a directory 'f9_ground_tracks_for_heatmap'
-    # containing KMZ files for nominal and dispersed flight paths.
+    output_dir = "./trajectories"  
     generate_dispersed_f9_flight_kmzs(
-        output_dir="f9_ground_tracks_for_heatmap",
-        num_dispersions_per_profile=4,   # For each of the 3 nominal profiles, generate 4 dispersed variants
-        dispersion_radius_degrees=0.75,  # End points will vary by up to +/- 0.75 degrees in lat/lon
-        num_points_per_track=150         # Each ground track will have 150 points
+        output_dir=output_dir,
+        num_dispersions_per_profile=4,
+        dispersion_radius_degrees=0.75,
+        num_points_per_track=150
     )
+    generate_js_index_file(kmz_dir=output_dir, output_file="./trajectories/index.js")

@@ -16,7 +16,11 @@ function Globe() {
   const { useDefaultConstellation, 
           uploadedFlightGeoJson,
           altitude, beamwidth,
-          showFlightTrajectory, showCircuits, showSatellites, showGroundStations
+          showFlightPaths, 
+          showCircuits, 
+          showSatellites, 
+          showGroundStations, 
+          mapProjection
         } = useGlobalContext();
 
   const mapRef = useRef(null);
@@ -34,10 +38,11 @@ function Globe() {
 
   const resetMapView = () => {
     if (mapRef.current) {
-      mapRef.current.jumpTo({
+      mapRef.current.flyTo({
         center: [initialViewState.longitude, initialViewState.latitude],
         zoom: initialViewState.zoom,
         pitch: 0,
+        bearing: 0
       });
     }
   };
@@ -93,21 +98,22 @@ function Globe() {
       ref={mapRef}
       mapboxAccessToken={MAPBOX_TOKEN}
       initialViewState={initialViewState}
-      style={{ height: '100vh', width: '98vw' }}
+      style={{ height: 'calc(100vh - 60px)', width: '98vw' }}
       mapStyle="mapbox://styles/kmajid24/cmbenh4hd004201ptfkp97j18"
       onLoad={handleMapLoad}
       attributionControl={false}
+      projection={mapProjection}
     >
       {mapLoaded && (
         <>
-          {useDefaultConstellation && showSatellites && 
+          {(useDefaultConstellation) && 
             <Satellites
               animationSpeed={animationSpeed}
               isPaused={isPaused}
               customTleData={customTleData}
           />}
 
-         { showFlightTrajectory && 
+         { showFlightPaths && 
          <FlightTrajectory
             geojsonSource={uploadedFlightGeoJson}
             heatmapConfig={{

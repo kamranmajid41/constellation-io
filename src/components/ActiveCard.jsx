@@ -1,13 +1,9 @@
-import { useState, useEffect} from 'react';
-import JSZip from 'jszip'; // Re-import JSZip for KMZ processing
+import { useState } from 'react';
+import JSZip from 'jszip'; 
 import {
-  IconStopwatch,
   IconUpload,
-  IconEye,
 } from '@tabler/icons-react';
 import {
-  Box,
-  ActionIcon,
   FileInput,
   Card,
   Text,
@@ -15,23 +11,26 @@ import {
   Stack,
   CloseButton,
   Checkbox, 
-  NumberInput
+  NumberInput, 
+  Select
 } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import { useGlobalContext } from '../context/GlobalContext';
 import GroundStationsCard from './GroundStationsCard';
 import Visibility from './Visibility';
 import stationData from '../data/satnogs_ground_stations.json';
+import savedTrajectories from '../data/trajectories';
+
 
 
 function ActiveCard({ activePanel, setActivePanel }) {
 
-  const { setUseDefaultConstellation, 
+  const { useDefaultConstellation, setUseDefaultConstellation, 
           setUploadedFlightGeoJson, 
           setCustomTleData, 
           beamwidth, setBeamwidth, 
           altitude, setAltitude,
-          setEnableDispersions, 
+          enableDispersions, setEnableDispersions, 
         } = useGlobalContext();
 
   const [files, setFiles] = useState({
@@ -40,7 +39,8 @@ function ActiveCard({ activePanel, setActivePanel }) {
     circuits: null,
     kmz: null, 
   });
-  const [showGroundStations, setShowGroundStations] = useState(false);
+  const [selectedTrajectory, setSelectedTrajectory] = useState(null);
+  
 
   const parseKMLToGeoJSONFeatures = (kmlString, fileName) => {
     const parser = new DOMParser();
@@ -48,7 +48,6 @@ function ActiveCard({ activePanel, setActivePanel }) {
     const features = [];
     const errors = [];
 
-    // const KML_NAMESPACE = 'http://www.opengis.net/kml/2.2';
 
     kmlDoc.querySelectorAll('Placemark').forEach(placemarkEl => {
       const lineStringEl = placemarkEl.querySelector('LineString');
@@ -289,6 +288,7 @@ function ActiveCard({ activePanel, setActivePanel }) {
               or
               <Checkbox
                 label="use default (Starlink)"
+                value={useDefaultConstellation}
                 onChange={(event) => setUseDefaultConstellation(event.currentTarget.checked)}
               />
               </>
@@ -323,8 +323,38 @@ function ActiveCard({ activePanel, setActivePanel }) {
                   multiple
                   value={files.kmz}
                 />
+                or 
+                <Select
+                  placeholder="Select a saved flight trajectory"
+                  data={savedTrajectories.map(t => ({ value: t.fileName, label: t.label }))}
+                  value={selectedTrajectory}
+                  onChange={async (selectedFileName) => {
+                    setSelectedTrajectory(selectedFileName);
+
+                    const match = savedTrajectories.find(t => t.fileName === selectedFileName);
+                    if (!match) return;
+
+                    try {
+                      const response = await fetch(`src/data/trajectories/${match.fileName}`);
+                      const blob = await response.blob();
+                      const file = new File([blob], match.fileName, { type: blob.type });
+
+                      await handleKmzUpload(file); // reuse your existing handler
+                    } catch (err) {
+                      console.error("Error loading pre-saved trajectory:", err);
+                      notifications.show({
+                        title: 'Load Error',
+                        message: `Could not load trajectory ${match.fileName}`,
+                        color: 'red',
+                      });
+                    }
+                  }}
+                  clearable
+                />
+
                 <Checkbox 
                   label="enable dispersions" 
+                  value={enableDispersions}
                   onChange={(event) => setEnableDispersions(event.currentTarget.checked)}
                 />
 

@@ -13,12 +13,16 @@
     "deploy": "gh-pages -d dist"
   },
   "dependencies": {
-    "@mantine/core": "^8.0.2",
-    "@mantine/hooks": "^8.0.2",
+    "@mantine/carousel": "^8.1.1",
+    "@mantine/core": "^8.1.1",
+    "@mantine/hooks": "^8.1.1",
     "@mantine/notifications": "^8.0.2",
     "@tabler/icons-react": "^3.34.0",
     "@tanstack/react-virtual": "^3.13.9",
     "@types/mapbox-gl": "^3.4.1",
+    "embla-carousel": "^8.6.0",
+    "embla-carousel-autoplay": "^8.6.0",
+    "embla-carousel-react": "^8.6.0",
     "jszip": "^3.10.1",
     "mapbox-gl": "^3.12.0",
     "papaparse": "^5.5.3",
@@ -26,7 +30,8 @@
     "react-dom": "^19.1.0",
     "react-map-gl": "^8.0.4",
     "satellite.js": "^6.0.0",
-    "tle.js": "^5.0.1"
+    "tle.js": "^5.0.1",
+    "undefined": "^0.1.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.25.0",

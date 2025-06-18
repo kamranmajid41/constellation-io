@@ -18,7 +18,7 @@ import {
   Group,
   Stack,
   CloseButton,
-  Image
+  Image, 
 } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 
@@ -134,9 +134,15 @@ function Settings({ setCustomTleData, setFlightTrajectoryData, activePanel, setA
       <Stack
         spacing="xs"
         position="left"
-        
       >
-       
+         <ActionIcon
+          variant={activePanel === 'visibility' ? 'filled' : 'light'}
+          onClick={() => setActivePanel(activePanel === 'visibility' ? null : 'visibility')}
+          size="lg"
+        >
+          <IconEye size={18} />
+        </ActionIcon>
+
         <ActionIcon
           variant={activePanel === 'tle' ? 'filled' : 'light'}
           onClick={() => setActivePanel(activePanel === 'tle' ? null : 'tle')}
@@ -164,13 +170,6 @@ function Settings({ setCustomTleData, setFlightTrajectoryData, activePanel, setA
           size="lg"
         >
           <IconRocket size={18} />
-        </ActionIcon>
-        <ActionIcon
-          variant={activePanel === 'visibility' ? 'filled' : 'light'}
-          onClick={() => setActivePanel(activePanel === 'visibility' ? null : 'visibility')}
-          size="lg"
-        >
-          <IconEye size={18} />
         </ActionIcon>
         <ActionIcon
           variant={activePanel === 'schedule' ? 'filled' : 'light'}

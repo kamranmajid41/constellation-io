@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Source, Layer, Marker } from 'react-map-gl/mapbox';
 import * as satellite from 'satellite.js';
 
-import tleData from '../../scripts/starlink_tles.json';
+import tleData from '../data/starlink_tles.json';
 
 const generateCircle = (latitude, longitude, radiusInDegrees = 0.1, numPoints = 12) => {
   const coordinates = [];

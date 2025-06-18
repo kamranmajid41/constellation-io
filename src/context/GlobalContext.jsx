@@ -14,8 +14,10 @@ export const GlobalProvider = ({ children }) => {
   // VISIBILITY CONTEXT
   const [showSatellites, setShowSatellites] = useState(false); 
   const [showGroundStations, setShowGroundStations] = useState(false); 
-  const [showFlightPaths, setShowFlightPaths] = useState(false); 
+  const [showFlightPaths, setShowFlightPaths] = useState(true); 
   const [showCircuits, setShowCircuits] = useState(false); 
+  const [showGroundStationLabels, setShowGroundStationLabels] = useState(false);
+  const [mapProjection, setMapProjection] = useState('globe'); 
 
   return (
     <GlobalContext.Provider value={{ 
@@ -27,11 +29,12 @@ export const GlobalProvider = ({ children }) => {
         altitude, setAltitude,
         enableDispersions, setEnableDispersions,
 
-
         showSatellites, setShowSatellites,
         showGroundStations, setShowGroundStations,
         showFlightPaths, setShowFlightPaths,
-        showCircuits, setShowCircuits
+        showCircuits, setShowCircuits,
+        showGroundStationLabels, setShowGroundStationLabels,
+        mapProjection, setMapProjection
         
     }}>
       {children}

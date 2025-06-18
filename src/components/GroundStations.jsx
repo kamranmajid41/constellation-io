@@ -1,14 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Source, Layer } from 'react-map-gl/mapbox';
+import { useGlobalContext } from '../context/GlobalContext';
 
-/**
- * GroundStationsMapLayer displays SatNOGS ground stations as circles on the map.
- *
- * Props:
- * - geojsonSource (string URL | Array of station objects): data source for ground stations
- * - circleColor (string): Optional, default 'green'
- * - circleRadius (number): Optional, default 6
- */
 const GroundStations = ({
   geojsonSource,
   circleColor = 'green',
@@ -18,6 +11,7 @@ const GroundStations = ({
     type: 'FeatureCollection',
     features: []
   });
+  const {showGroundStationLabels} = useGlobalContext(); 
 
   useEffect(() => {
     const loadGeoJSON = async () => {
@@ -35,7 +29,7 @@ const GroundStations = ({
           return;
         }
 
-        // Convert SatNOGS raw stations array to GeoJSON FeatureCollection
+        // Convert to GeoJSON FeatureCollection
         if (Array.isArray(data)) {
           const features = data
             .filter(station => station.lat != null && station.lon != null)
@@ -45,18 +39,15 @@ const GroundStations = ({
                 type: 'Point',
                 coordinates: [station.lon, station.lat]
               },
-              properties: { ...station } // all other fields preserved as properties
+              properties: { ...station }
             }));
 
           setStationsGeoJson({
             type: 'FeatureCollection',
             features
           });
-        } else if (data.type === 'FeatureCollection' && Array.isArray(data.features)) {
-          // If already GeoJSON, just use it directly
+        } else if (data.type === 'FeatureCollection') {
           setStationsGeoJson(data);
-        } else {
-          console.warn('Data format not recognized');
         }
       } catch (error) {
         console.error("Error loading ground station data:", error);
@@ -78,10 +69,26 @@ const GroundStations = ({
               'circle-color': circleColor,
               'circle-stroke-width': 1,
               'circle-stroke-color': 'white',
-              'circle-opacity': 0.3, 
+              'circle-opacity': 0.3,
               'circle-emissive-strength': 2
             }}
           />
+        { showGroundStationLabels && 
+          <Layer
+            id="ground-stations-labels"
+            type="symbol"
+            layout={{
+              'text-field': ['get', 'name'], 
+              'text-size': 12,
+              'text-anchor': 'top',
+              'text-offset': [0, 0.6]
+            }}
+            paint={{
+              'text-color': '#000000',
+              'text-halo-color': '#ffffff',
+              'text-halo-width': 1
+            }}
+          />}
         </Source>
       )}
     </>

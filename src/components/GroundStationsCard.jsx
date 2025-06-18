@@ -111,8 +111,8 @@ function GroundStationsCard({ stations = [], onClose }) {
           <Stack spacing="xs">
             <Text fw={600}>{selectedStation.name}</Text>
             <Text size="sm">ID: {selectedStation.id}</Text>
-            <Text size="sm">Latitude: {selectedStation.latitude}</Text>
-            <Text size="sm">Longitude: {selectedStation.longitude}</Text>
+            <Text size="sm">Latitude: {selectedStation.lat}</Text>
+            <Text size="sm">Longitude: {selectedStation.lon}</Text>
             <Text size="sm">
               {selectedStation.description || 'No description available'}
             </Text>
