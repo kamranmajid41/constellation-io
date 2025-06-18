@@ -17,6 +17,9 @@ export const GlobalProvider = ({ children }) => {
   const [showFlightPaths, setShowFlightPaths] = useState(false); 
   const [showCircuits, setShowCircuits] = useState(false); 
 
+  // 📊 GRAPH DATA CONTEXT
+  const [graphData, setGraphData] = useState({}); // initially empty dictionary
+
   return (
     <GlobalContext.Provider value={{ 
 
@@ -27,12 +30,13 @@ export const GlobalProvider = ({ children }) => {
         altitude, setAltitude,
         enableDispersions, setEnableDispersions,
 
-
         showSatellites, setShowSatellites,
         showGroundStations, setShowGroundStations,
         showFlightPaths, setShowFlightPaths,
-        showCircuits, setShowCircuits
-        
+        showCircuits, setShowCircuits,
+
+        graphData, setGraphData
+
     }}>
       {children}
     </GlobalContext.Provider>

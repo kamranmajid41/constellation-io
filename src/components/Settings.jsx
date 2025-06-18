@@ -4,10 +4,11 @@ import {
   IconStopwatch,
   IconUpload,
   IconEye,
-  IconSatellite, 
+  IconSatellite,
   IconAntenna,
   IconCircuitResistor,
-  IconRocket
+  IconRocket,
+  IconChartBar // <-- ADDED for graph button
 } from '@tabler/icons-react';
 import {
   Box,
@@ -22,8 +23,7 @@ import {
 } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 
-
-function Settings({ setCustomTleData, setFlightTrajectoryData, activePanel, setActivePanel}) {
+function Settings({ setCustomTleData, setFlightTrajectoryData, activePanel, setActivePanel }) {
   const [files, setFiles] = useState({
     tle: null,
     groundTopology: null,
@@ -131,12 +131,7 @@ function Settings({ setCustomTleData, setFlightTrajectoryData, activePanel, setA
 
   return (
     <>
-      <Stack
-        spacing="xs"
-        position="left"
-        
-      >
-       
+      <Stack spacing="xs" position="left">
         <ActionIcon
           variant={activePanel === 'tle' ? 'filled' : 'light'}
           onClick={() => setActivePanel(activePanel === 'tle' ? null : 'tle')}
@@ -178,6 +173,15 @@ function Settings({ setCustomTleData, setFlightTrajectoryData, activePanel, setA
           size="lg"
         >
           <IconStopwatch size={18} />
+        </ActionIcon>
+
+        {/* 📊 NEW GRAPH BUTTON */}
+        <ActionIcon
+          variant={activePanel === 'graph' ? 'filled' : 'light'}
+          onClick={() => setActivePanel(activePanel === 'graph' ? null : 'graph')}
+          size="lg"
+        >
+          <IconChartBar size={18} />
         </ActionIcon>
       </Stack>
     </>
