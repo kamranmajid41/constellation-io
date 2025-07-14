@@ -135,7 +135,7 @@ function Settings({ setCustomTleData, setFlightTrajectoryData, activePanel, setA
         spacing="xs"
         position="left"
       >
-         <ActionIcon
+        <ActionIcon
           variant={activePanel === 'visibility' ? 'filled' : 'light'}
           onClick={() => setActivePanel(activePanel === 'visibility' ? null : 'visibility')}
           size="lg"

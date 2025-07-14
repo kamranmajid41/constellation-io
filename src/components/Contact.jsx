@@ -49,6 +49,12 @@ function Contact() {
         alignItems: 'center',
         justifyContent: 'flex-start',
         overflowY: 'auto', 
+        height: '100vh',
+        width: '100vw',
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        zIndex: 0,
       }}
     >
       <Container size="sm" py="xl">

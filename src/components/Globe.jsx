@@ -98,7 +98,7 @@ function Globe() {
       ref={mapRef}
       mapboxAccessToken={MAPBOX_TOKEN}
       initialViewState={initialViewState}
-      style={{ height: 'calc(100vh - 60px)', width: '98vw' }}
+      style={{ height: '100vh', width: '98vw' }}
       mapStyle="mapbox://styles/kmajid24/cmbenh4hd004201ptfkp97j18"
       onLoad={handleMapLoad}
       attributionControl={false}

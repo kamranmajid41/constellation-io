@@ -254,12 +254,11 @@ function ActiveCard({ activePanel, setActivePanel }) {
           withBorder
           style={{
             position: 'absolute',
-            bottom: 20,
-            right: 20,
+            bottom: 10,
+            right: 50,
             width: 300,
-            zIndex: 999,
+            zIndex: 1000000000,
             maxHeight: "90vh"
-
           }}
         >
           <Group position="apart" mb="sm">
@@ -384,7 +383,7 @@ function ActiveCard({ activePanel, setActivePanel }) {
             )}
 
             {activePanel === 'schedule' && (
-              <Text size="sm" c="dimmed">Schedule jobs panel under construction.</Text>
+              <Text size="sm" c="dimmed">This feature is not available in the demo!.</Text>
             )}
           </Stack>
         </Card>

@@ -288,27 +288,3 @@ function App() {
 }
 
 export default App;
-
-// Update global CSS for carousel animation
-const style = document.createElement('style');
-style.innerHTML = `
-@keyframes carousel-spin {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
-}
-`;
-document.head.appendChild(style);
-
-const appButtonStyle = document.createElement('style');
-appButtonStyle.innerHTML = `
-.app-button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 32px 0 rgba(30,40,90,0.12);
-}
-.app-button.active {
-  background: #2aa9a8 !important;
-  color: white !important;
-  border-color: #2aa9a8 !important;
-}
-`;
-document.head.appendChild(appButtonStyle);
