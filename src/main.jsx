@@ -13,7 +13,7 @@ createRoot(document.getElementById('root')).render(
   <MantineProvider defaultColorScheme="dark">
     <Notifications />
     <StrictMode>
-      <BrowserRouter basename={import.meta.env.PROD && window.location.hostname.includes('vercel') ? '/' : '/constellation-io'}>
+      <BrowserRouter>
         <App />
       </BrowserRouter>
     </StrictMode>

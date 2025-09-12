@@ -31,7 +31,7 @@ function App() {
   const navigate = useNavigate ? useNavigate() : null;
   const location = useLocation();
 
-  const noHeaderAndFooterPaths = ['/constellation-io/demo']; 
+  const noHeaderAndFooterPaths = ['/demo']; 
   const showHeaderAndFooter = !noHeaderAndFooterPaths.includes(location.pathname);
 
   useEffect(() => {
@@ -46,7 +46,7 @@ function App() {
       import('./components/ConstellationIo');
     };
 
-    const demoButton = document.querySelector('button[onClick*="/constellation-io/demo"]');
+    const demoButton = document.querySelector('button[onClick*="/demo"]');
     if (demoButton) {
       demoButton.addEventListener('mouseenter', preloadDemo);
       return () => {
@@ -60,31 +60,31 @@ function App() {
   {
     key: 'industrial',
     label: 'Industrial',
-    image: '/constellation-io/industrial.jpg',
+    image: '/industrial.jpg',
     description: 'Streamline operations and boost efficiency in agriculture, mining, energy, and logistics with Constellation-io’s AI-powered, space-terrestrial mesh. Achieve real-time monitoring, automation, and control—anywhere on Earth, without reliance on legacy infrastructure.'
   },
   {
     key: 'security',
     label: 'National Security',
-    image: '/constellation-io/security.jpg',
+    image: '/security.jpg',
     description: 'Deliver resilient, secure communications for defense, emergency response, and critical infrastructure. Constellation-io’s self-healing networks ensure mission-critical connectivity in contested, remote, or denied environments.'
   },
   {
     key: 'devices',
     label: 'Connected Devices',
-    image: '/constellation-io/devices.webp',
+    image: '/devices.webp',
     description: 'Enable massive-scale IoT and edge deployments with low-latency, high-throughput links. Constellation-io seamlessly connects sensors, vehicles, and smart assets across cities, supply chains, and remote sites.'
   },
   {
     key: 'automotive',
     label: 'Automotive',
-    image: '/constellation-io/automotive.jpg',
+    image: '/automotive.jpg',
     description: 'Power next-generation mobility with uninterrupted, global connectivity for autonomous vehicles, fleets, and smart transportation systems. Constellation-io’s adaptive routing ensures safety and performance on every route.'
   },
   {
     key: 'timing',
     label: 'Distributed Timing',
-    image: '/constellation-io/timing.jpg',
+    image: '/timing.jpg',
     description: 'Provide ultra-precise, resilient timing and synchronization for financial services, telecom, and scientific research. Constellation-io’s distributed architecture eliminates single points of failure and legacy dependencies.'
   },
 ];
@@ -109,7 +109,7 @@ function App() {
             <Group align="center" style={{ height: '100%' }}>
               <a
                 href="/"
-                onClick={e => { e.preventDefault(); window.scrollTo({top:0,behavior:'smooth'}); navigate && navigate('/constellation-io/'); }}
+                onClick={e => { e.preventDefault(); window.scrollTo({top:0,behavior:'smooth'}); navigate && navigate('/'); }}
                 style={{
                   background: 'none',
                   border: 'none',
@@ -124,7 +124,7 @@ function App() {
                 aria-label="Go to home page"
               >
                 <img
-                  src="/constellation-io/cio.png"
+                  src="/cio.png"
                   alt="Constellation IO Logo"
                   style={{ height: 44, width: 'auto', display: 'block', objectFit: 'contain' }}
                 />
@@ -144,9 +144,9 @@ function App() {
                     const companySection = document.getElementById('company');
                     if (companySection) companySection.scrollIntoView({ behavior: 'smooth' });
                   }}> Company </Button>
-                  <Button variant="subtle" color="gray" style={{ color: 'white', fontWeight: 400, fontSize: 16, background: 'none' }} compact onClick={() => navigate && navigate('/constellation-io/demo')}> Demo </Button>
-                  <Button variant="outline" color="white" style={{ fontWeight: 400, fontSize: 16, borderRadius: 8 }} compact onClick={() => navigate && navigate('/constellation-io/careers')}>Join the team</Button>
-                  <Button color="#2aa9a8" style={{ fontWeight: 400, fontSize: 16, borderRadius: 8 }} compact onClick={() => navigate && navigate('/constellation-io/contact')}><Text c='black'>Talk to us</Text></Button>
+                  <Button variant="subtle" color="gray" style={{ color: 'white', fontWeight: 400, fontSize: 16, background: 'none' }} compact onClick={() => navigate && navigate('/demo')}> Demo </Button>
+                  <Button variant="outline" color="white" style={{ fontWeight: 400, fontSize: 16, borderRadius: 8 }} compact onClick={() => navigate && navigate('/careers')}>Join the team</Button>
+                  <Button color="#2aa9a8" style={{ fontWeight: 400, fontSize: 16, borderRadius: 8 }} compact onClick={() => navigate && navigate('/contact')}><Text c='black'>Talk to us</Text></Button>
                 </Group>
               ) : (
                 <Burger opened={opened} onClick={toggle} color="#fff" size="sm" />
@@ -181,9 +181,9 @@ function App() {
                   if (companySection) companySection.scrollIntoView({ behavior: 'smooth' });
                   toggle();
                 }}> Company </Button>
-                <Button variant="subtle" color="gray" style={{ color: 'white', fontWeight: 400, fontSize: 18, background: 'none', width: '100%', textAlign: 'right' }} compact onClick={() => { navigate && navigate('/constellation-io/demo'); toggle(); }}> Demo </Button>
-                <Button variant="outline" color="white" style={{ fontWeight: 400, fontSize: 18, borderRadius: 8, width: '100%', textAlign: 'right' }} compact onClick={() => { navigate && navigate('/constellation-io/careers'); toggle(); }}>Join the team</Button>
-                <Button color="#2aa9a8" style={{ fontWeight: 400, fontSize: 18, borderRadius: 8, width: '100%', textAlign: 'right' }} compact onClick={() => { navigate && navigate('/constellation-io/contact'); toggle(); }}><Text c='black'>Talk to us</Text></Button>
+                <Button variant="subtle" color="gray" style={{ color: 'white', fontWeight: 400, fontSize: 18, background: 'none', width: '100%', textAlign: 'right' }} compact onClick={() => { navigate && navigate('/demo'); toggle(); }}> Demo </Button>
+                <Button variant="outline" color="white" style={{ fontWeight: 400, fontSize: 18, borderRadius: 8, width: '100%', textAlign: 'right' }} compact onClick={() => { navigate && navigate('/careers'); toggle(); }}>Join the team</Button>
+                <Button color="#2aa9a8" style={{ fontWeight: 400, fontSize: 18, borderRadius: 8, width: '100%', textAlign: 'right' }} compact onClick={() => { navigate && navigate('/contact'); toggle(); }}><Text c='black'>Talk to us</Text></Button>
               </Box>
             )}
           </AppShell.Header>
@@ -198,7 +198,7 @@ function App() {
             paddingTop: 0
           }}>
             <Routes>
-              <Route path="/constellation-io/" element={
+              <Route path="/" element={
                 <HomePage
                   isSmallScreen={isSmallScreen}
                   APPLICATIONS={APPLICATIONS}
@@ -206,10 +206,10 @@ function App() {
                   setActiveApp={setActiveApp}
                 />
               } />
-              <Route path="/constellation-io/careers" element={<Careers />} />
-              <Route path="/constellation-io/contact" element={<Contact />} />
+              <Route path="/careers" element={<Careers />} />
+              <Route path="/contact" element={<Contact />} />
 
-              <Route path="/constellation-io/demo" element={
+              <Route path="/demo" element={
                 !isMobile ? (
                   // If NOT mobile, show the interactive demo
                   <Suspense fallback={<div>Loading Demo...</div>}>
@@ -246,7 +246,7 @@ function App() {
           <Box style={{ maxWidth: 1200, margin: '0 auto', display: 'flex', flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'flex-start', padding: '0 24px 32px 24px', gap: 48 }}>
             {/* Left: Logo and newsletter */}
             <Box style={{ flex: 2, minWidth: 320, maxWidth: 420 }}>
-              <img src="/constellation-io/cio.png" alt="Constellation-io Logo" style={{ height: 36, marginBottom: 24, filter: 'brightness(0) invert(1)' }} />
+              <img src="/cio.png" alt="Constellation-io Logo" style={{ height: 36, marginBottom: 24, filter: 'brightness(0) invert(1)' }} />
               <Title order={3} style={{ color: '#fff', fontWeight: 500, fontSize: 24, marginBottom: 12, letterSpacing: '-0.5px' }}>Keep up to date with news from Constellation-io.</Title>
               <form style={{ display: 'flex', flexDirection: 'row', gap: 8, marginTop: 16 }} onSubmit={e => e.preventDefault()}>
                 <TextInput
@@ -273,8 +273,8 @@ function App() {
               <Text size="sm" style={{ color: '#888', fontWeight: 500, letterSpacing: 1, marginBottom: 16 }}>COMPANY</Text>
               <Stack spacing={8}>
                 {/* Changed these to use Link component for proper routing */}
-                <UnstyledButton component={Link} to="/constellation-io/careers" style={{ color: '#fff', fontSize: 18, textAlign: 'left', padding: 0 }}>Careers</UnstyledButton>
-                <UnstyledButton component={Link} to="/constellation-io/contact" style={{ color: '#fff', fontSize: 18, textAlign: 'left', padding: 0 }}>Contact us</UnstyledButton>
+                <UnstyledButton component={Link} to="/careers" style={{ color: '#fff', fontSize: 18, textAlign: 'left', padding: 0 }}>Careers</UnstyledButton>
+                <UnstyledButton component={Link} to="/contact" style={{ color: '#fff', fontSize: 18, textAlign: 'left', padding: 0 }}>Contact us</UnstyledButton>
               </Stack>
             </Box>
           </Box>
@@ -288,3 +288,6 @@ function App() {
 }
 
 export default App;
+
+
+
