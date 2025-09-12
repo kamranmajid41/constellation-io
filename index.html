@@ -1,14 +1,88 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/png" href="/constellation-io/cio.png" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Constellation IO</title>
-    <script type="module" crossorigin src="/constellation-io/assets/index-BRyRZeO5.js"></script>
-    <link rel="stylesheet" crossorigin href="/constellation-io/assets/index-CPKXqvOh.css">
-  </head>
-  <body>
-    <div id="root"></div>
-  </body>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Constellation-io - Redirecting...</title>
+    <meta http-equiv="refresh" content="0; url=https://constellation-jw22kmjlp-kamran-majids-projects.vercel.app">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
+            color: white;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            text-align: center;
+        }
+        .container {
+            max-width: 600px;
+            padding: 2rem;
+        }
+        .logo {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, #2aa9a8, #00d4aa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .message {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+        .redirect-link {
+            display: inline-block;
+            padding: 12px 24px;
+            background: linear-gradient(45deg, #2aa9a8, #00d4aa);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: transform 0.2s ease;
+        }
+        .redirect-link:hover {
+            transform: translateY(-2px);
+            text-decoration: none;
+            color: white;
+        }
+        .spinner {
+            border: 3px solid rgba(42, 169, 168, 0.3);
+            border-top: 3px solid #2aa9a8;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="spinner"></div>
+        <div class="logo">Constellation-io</div>
+        <div class="message">
+            Redirecting you to our new platform...
+        </div>
+        <a href="https://constellation-jw22kmjlp-kamran-majids-projects.vercel.app" class="redirect-link">
+            Click here if you're not redirected automatically
+        </a>
+    </div>
+
+    <script>
+        // Immediate redirect as backup
+        setTimeout(() => {
+            window.location.href = 'https://constellation-jw22kmjlp-kamran-majids-projects.vercel.app';
+        }, 100);
+    </script>
+</body>
 </html>
