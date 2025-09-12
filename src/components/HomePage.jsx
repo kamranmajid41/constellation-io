@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Box, Stack, Title, Text, Group, ThemeIcon } from '@mantine/core';
-import { IconArrowsMaximize, IconBroadcast, IconShieldCheck, IconFileText } from '@tabler/icons-react';
+import { IconArrowsMaximize, IconBroadcast, IconShieldCheck, IconFileText, IconBrandLinkedin } from '@tabler/icons-react';
 import { Routes, Route, Link, useNavigate, useLocation } from 'react-router-dom';
 
 export default function HomePage({
@@ -9,6 +9,18 @@ export default function HomePage({
   activeApp,
   setActiveApp,
 }) {
+  // Add CSS animation for carousel
+  useEffect(() => {
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes carousel-spin {
+        0% { transform: translateX(0); }
+        100% { transform: translateX(-50%); }
+      }
+    `;
+    document.head.appendChild(style);
+    return () => document.head.removeChild(style);
+  }, []);
   const navigate = useNavigate ? useNavigate() : null;
 
   return (
@@ -331,22 +343,46 @@ export default function HomePage({
                 Our founders have experienced firsthand the pitfalls and limitations of current strategies while working at top space companies. This unique perspective fuels our mission to build something fundamentally better. <br/><br/>
               </Text>
           </Box>
-          {/* Right: Founders row, vertically stacked */}
-          <Box style={{ flex: 1.2, minWidth: 320, maxWidth: 400, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 40 }}>
-            <Box style={{ textAlign: 'center' }}>
-              <img src="/kam_headshot.jpeg" alt="Kamran Majid, Founder" style={{ width: 120, height: 120, borderRadius: '50%', objectFit: 'cover', marginBottom: 12, boxShadow: '0 2px 12px 0 rgba(30,40,90,0.10)' }} />
-              <Text size="md" style={{ fontWeight: 600, color: '#111' }}>Kamran Majid</Text>
-              <Text size="sm" style={{ color: '#666' }}>Founder & CEO</Text>
+          {/* Right: Founders in a 2x2 grid */}
+          <Box style={{ flex: 1.2, minWidth: 320, maxWidth: 400, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px', alignItems: 'start', marginTop: '70px'}}>
+            {/* Kamran Majid */}
+            <Box style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              <img src="/kam_headshot.jpeg" alt="Kamran Majid, Founder" style={{ width: 100, height: 100, borderRadius: '50%', objectFit: 'cover', marginBottom: 8, boxShadow: '0 2px 12px 0 rgba(30,40,90,0.10)' }} />
+              <Text size="sm" style={{ fontWeight: 600, color: '#111', marginBottom: 2 }}>Kamran Majid</Text>
+              <Text size="xs" style={{ color: '#666', marginBottom: 6 }}>Founder & CEO</Text>
+              <a href="https://www.linkedin.com/in/kamran-majid-0571121b0/" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }}>
+                <IconBrandLinkedin size={16} color="#0077b5" style={{ cursor: 'pointer', transition: 'opacity 0.2s' }} />
+              </a>
             </Box>
-            <Box style={{ textAlign: 'center' }}>
-              <img src="/omeed.jpeg" alt="Omeed Tehrani, Founder" style={{ width: 120, height: 120, borderRadius: '50%', objectFit: 'cover', marginBottom: 12, boxShadow: '0 2px 12px 0 rgba(30,40,90,0.10)' }} />
-              <Text size="md" style={{ fontWeight: 600, color: '#111' }}>Omeed Tehrani</Text>
-              <Text size="sm" style={{ color: '#666' }}>Co-Founder & CTO</Text>
+
+            {/* Omeed Tehrani */}
+            <Box style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              <img src="/omeed.jpeg" alt="Omeed Tehrani, Founder" style={{ width: 100, height: 100, borderRadius: '50%', objectFit: 'cover', marginBottom: 8, boxShadow: '0 2px 12px 0 rgba(30,40,90,0.10)' }} />
+              <Text size="sm" style={{ fontWeight: 600, color: '#111', marginBottom: 2 }}>Omeed Tehrani</Text>
+              <Text size="xs" style={{ color: '#666', marginBottom: 6 }}>Head of Operations</Text>
+              <a href="https://www.linkedin.com/in/omeedtehrani/" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }}>
+                <IconBrandLinkedin size={16} color="#0077b5" style={{ cursor: 'pointer', transition: 'opacity 0.2s' }} />
+              </a>
             </Box>
-            <Box style={{ textAlign: 'center' }}>
-              <img src="/raaid.jpeg" alt="Raaid Kabir, Founder" style={{ width: 120, height: 120, borderRadius: '50%', objectFit: 'cover', marginBottom: 12, boxShadow: '0 2px 12px 0 rgba(30,40,90,0.10)' }} />
-              <Text size="md" style={{ fontWeight: 600, color: '#111' }}>Raaid Kabir</Text>
-              <Text size="sm" style={{ color: '#666' }}>Co-Founder & COO</Text>
+
+            {/* Raaid Kabir */}
+            <Box style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              <img src="/raaid.jpeg" alt="Raaid Kabir, Founder" style={{ width: 100, height: 100, borderRadius: '50%', objectFit: 'cover', marginBottom: 8, boxShadow: '0 2px 12px 0 rgba(30,40,90,0.10)' }} />
+              <Text size="sm" style={{ fontWeight: 600, color: '#111', marginBottom: 2 }}>Raaid Kabir</Text>
+              <Text size="xs" style={{ color: '#666', marginBottom: 6 }}>Founding Engineer</Text>
+              <a href="https://www.linkedin.com/in/raaid-kabir/" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }}>
+                <IconBrandLinkedin size={16} color="#0077b5" style={{ cursor: 'pointer', transition: 'opacity 0.2s' }} />
+              </a>
+            </Box>
+
+            {/* Laith Altarabishi */}
+            <Box style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              <img src="/laith.jpeg" alt="Laith Altarabishi, Founder" style={{ width: 100, height: 100, borderRadius: '50%', objectFit: 'cover', marginBottom: 8, boxShadow: '0 2px 12px 0 rgba(30,40,90,0.10)' }} />
+              <Text size="sm" style={{ fontWeight: 600, color: '#111', marginBottom: 2 }}>Laith Altarabishi</Text>
+              <Text size="xs" style={{ color: '#666', marginBottom: 6 }}>Founding Engineer</Text>
+              <a href="https://www.linkedin.com/in/laithaustin/" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }}>
+                <IconBrandLinkedin size={16} color="#0077b5" style={{ cursor: 'pointer', transition: 'opacity 0.2s' }} />
+              </a>
             </Box>
           </Box>
         </Box>

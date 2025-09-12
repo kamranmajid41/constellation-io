@@ -1,10 +1,31 @@
-import { Image, Box, Card, Center, Text } from '@mantine/core';
-import { Carousel } from '@mantine/carousel';
-import Autoplay from 'embla-carousel-autoplay';
-import { useRef } from 'react';
+import React, { useState, useEffect } from 'react';
+import { Card, Center, Text, Button } from '@mantine/core';
 
 function ImageCarousel() {
-  const autoplay = useRef(Autoplay({ delay: 2500 }));
+  const [currentSlide, setCurrentSlide] = useState(0);
+
+  const slides = [
+    { src: '/spacex.png', alt: 'SpaceX' },
+    { src: '/nasa.png', alt: 'NASA' },
+    { src: '/ncsa.png', alt: 'NCSA' },
+    { src: '/blue.png', alt: 'Blue Origin' },
+  ];
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % slides.length);
+    }, 3000);
+
+    return () => clearInterval(timer);
+  }, [slides.length]);
+
+  const handleNext = () => {
+    setCurrentSlide((prev) => (prev + 1) % slides.length);
+  };
+
+  const handlePrev = () => {
+    setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
+  };
 
   return (
     <Card
@@ -18,8 +39,8 @@ function ImageCarousel() {
         top: 230,
         width: '90%',
         maxWidth: 600,
-        height: 150,  
-        padding: '0',
+        height: 150,
+        padding: '20px',
         transition: 'background-color 0.3s ease, box-shadow 0.3s ease',
       }}
       radius="lg"
@@ -33,51 +54,65 @@ function ImageCarousel() {
             background: 'linear-gradient(45deg, var(--mantine-color-lime-3) 0%, var(--mantine-color-cyan-3) 100%)',
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
-            marginBottom: '2rem',
+            marginBottom: '20px',
           }}
         >
           Built by engineers from
         </Text>
       </Center>
 
-      <Carousel
-        slideSize="40%" 
-        emblaOptions={{ loop: true}}
-        plugins={[autoplay.current]}
-        height="90%"  
-        withIndicators={false} 
-        withControls={false}  
-        align="center"
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: '80px',
+          position: 'relative',
+        }}
       >
-        {[
-          { src: '/spacex.png', alt: 'SpaceX' },
-          { src: '/nasa.png', alt: 'NASA' },
-          { src: '/ncsa.png', alt: 'NCSA' },
-          { src: '/blue.png', alt: 'Blue Origin' },
-        ].map((item, index) => (
-          <Carousel.Slide key={index}>
-            <Box
-              style={{
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                height: '90%',
-              }}
-            >
-              <Image
-                src={item.src}
-                alt={item.alt}
-                fit="contain"  
-                style={{
-                  filter: 'grayscale(100%)',
-                  maxWidth: '80%',  
-                  maxHeight: '80%', 
-                }}
-              />
-            </Box>
-          </Carousel.Slide>
-        ))}
-      </Carousel>
+        <Button
+          onClick={handlePrev}
+          style={{
+            position: 'absolute',
+            left: 0,
+            backgroundColor: 'transparent',
+            border: 'none',
+            zIndex: 10,
+          }}
+        >
+          &#8592;
+        </Button>
+
+        <img
+          src={slides[currentSlide].src}
+          alt={slides[currentSlide].alt}
+          style={{
+            filter: 'grayscale(100%)',
+            maxWidth: '120px',
+            maxHeight: '60px',
+            opacity: 0.7,
+            objectFit: 'contain',
+            transition: 'opacity 0.5s ease-in-out',
+          }}
+          onError={(e) => {
+            console.log(`Failed to load: ${slides[currentSlide].src}`);
+            e.target.style.display = 'none';
+          }}
+        />
+
+        <Button
+          onClick={handleNext}
+          style={{
+            position: 'absolute',
+            right: 0,
+            backgroundColor: 'transparent',
+            border: 'none',
+            zIndex: 10,
+          }}
+        >
+          &#8594;
+        </Button>
+      </div>
     </Card>
   );
 }
