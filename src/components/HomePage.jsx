@@ -34,7 +34,7 @@ export default function HomePage({
             AI-powered, resilient networks for secure, high-speed data anywhere.
           </Text>
           <button style={{ fontWeight: 500, fontSize: 15, marginTop: 8, padding: '0.6em 2em', border: '1px solid #fff', background: 'transparent', color: '#fff', borderRadius: 8, cursor: 'pointer' }}
-            onClick={() => navigate && navigate('/constellation-io/contact')}
+            onClick={() => navigate && navigate('/contact')}
           >
             Get early access
           </button>
@@ -72,7 +72,7 @@ export default function HomePage({
         </Text>
         <div style={{ width: '80vw', maxWidth: '600px', margin: '0', marginTop: '0', marginBottom: '0', height: 'min(15vw, 300px)', overflow: 'hidden', display: 'block' }}>
           <img
-            src="/constellation-io/mesh.png"
+            src="/mesh.png"
             alt="Mesh network illustration"
             style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top', display: 'block'}}
           />
@@ -243,13 +243,13 @@ export default function HomePage({
               onMouseOut={e => e.currentTarget.style.animationPlayState = 'running'}
             >
               {/* First set of logos */}
-              <img src="/constellation-io/spacex.png" alt="SpaceX" style={{ height: 48, filter: 'grayscale(1)', objectFit: 'contain', margin: '0 32px' }} />
-              <img src="/constellation-io/nasa.png" alt="NASA" style={{ height: 48, filter: 'grayscale(1)', objectFit: 'contain', margin: '0 32px' }} />
-              <img src="/constellation-io/blue.png" alt="Blue" style={{ height: 48, filter: 'grayscale(1)', objectFit: 'contain', margin: '0 32px' }} />
+              <img src="/spacex.png" alt="SpaceX" style={{ height: 48, filter: 'grayscale(1)', objectFit: 'contain', margin: '0 32px' }} />
+              <img src="/nasa.png" alt="NASA" style={{ height: 48, filter: 'grayscale(1)', objectFit: 'contain', margin: '0 32px' }} />
+              <img src="/blue.png" alt="Blue" style={{ height: 48, filter: 'grayscale(1)', objectFit: 'contain', margin: '0 32px' }} />
               {/* Duplicate for seamless loop */}
-              <img src="/constellation-io/spacex.png" alt="SpaceX" style={{ height: 48, filter: 'grayscale(1)', objectFit: 'contain', margin: '0 32px' }} />
-              <img src="/constellation-io/nasa.png" alt="NASA" style={{ height: 48, filter: 'grayscale(1)', objectFit: 'contain', margin: '0 32px' }} />
-              <img src="/constellation-io/blue.png" alt="Blue" style={{ height: 48, filter: 'grayscale(1)', objectFit: 'contain', margin: '0 32px' }} />
+              <img src="/spacex.png" alt="SpaceX" style={{ height: 48, filter: 'grayscale(1)', objectFit: 'contain', margin: '0 32px' }} />
+              <img src="/nasa.png" alt="NASA" style={{ height: 48, filter: 'grayscale(1)', objectFit: 'contain', margin: '0 32px' }} />
+              <img src="/blue.png" alt="Blue" style={{ height: 48, filter: 'grayscale(1)', objectFit: 'contain', margin: '0 32px' }} />
             </Box>
           </Box>
         </Box>
@@ -334,17 +334,17 @@ export default function HomePage({
           {/* Right: Founders row, vertically stacked */}
           <Box style={{ flex: 1.2, minWidth: 320, maxWidth: 400, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 40 }}>
             <Box style={{ textAlign: 'center' }}>
-              <img src="/constellation-io/kam_headshot.jpeg" alt="Kamran Majid, Founder" style={{ width: 120, height: 120, borderRadius: '50%', objectFit: 'cover', marginBottom: 12, boxShadow: '0 2px 12px 0 rgba(30,40,90,0.10)' }} />
+              <img src="/kam_headshot.jpeg" alt="Kamran Majid, Founder" style={{ width: 120, height: 120, borderRadius: '50%', objectFit: 'cover', marginBottom: 12, boxShadow: '0 2px 12px 0 rgba(30,40,90,0.10)' }} />
               <Text size="md" style={{ fontWeight: 600, color: '#111' }}>Kamran Majid</Text>
               <Text size="sm" style={{ color: '#666' }}>Founder & CEO</Text>
             </Box>
             <Box style={{ textAlign: 'center' }}>
-              <img src="/constellation-io/omeed.jpeg" alt="Omeed Tehrani, Founder" style={{ width: 120, height: 120, borderRadius: '50%', objectFit: 'cover', marginBottom: 12, boxShadow: '0 2px 12px 0 rgba(30,40,90,0.10)' }} />
+              <img src="/omeed.jpeg" alt="Omeed Tehrani, Founder" style={{ width: 120, height: 120, borderRadius: '50%', objectFit: 'cover', marginBottom: 12, boxShadow: '0 2px 12px 0 rgba(30,40,90,0.10)' }} />
               <Text size="md" style={{ fontWeight: 600, color: '#111' }}>Omeed Tehrani</Text>
               <Text size="sm" style={{ color: '#666' }}>Co-Founder & CTO</Text>
             </Box>
             <Box style={{ textAlign: 'center' }}>
-              <img src="/constellation-io/raaid.jpeg" alt="Raaid Kabir, Founder" style={{ width: 120, height: 120, borderRadius: '50%', objectFit: 'cover', marginBottom: 12, boxShadow: '0 2px 12px 0 rgba(30,40,90,0.10)' }} />
+              <img src="/raaid.jpeg" alt="Raaid Kabir, Founder" style={{ width: 120, height: 120, borderRadius: '50%', objectFit: 'cover', marginBottom: 12, boxShadow: '0 2px 12px 0 rgba(30,40,90,0.10)' }} />
               <Text size="md" style={{ fontWeight: 600, color: '#111' }}>Raaid Kabir</Text>
               <Text size="sm" style={{ color: '#666' }}>Co-Founder & COO</Text>
             </Box>

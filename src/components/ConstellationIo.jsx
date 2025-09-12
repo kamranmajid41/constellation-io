@@ -68,7 +68,7 @@ function ConstellationIo() {
           activePanel={activePanel}
         />
         <UnstyledButton
-          onClick={() => navigate('/constellation-io/')} // Navigate to your home route
+          onClick={() => navigate('/')} // Navigate to your home route
           style={{
             display: 'flex',
             justifyContent: 'center',
@@ -77,7 +77,7 @@ function ConstellationIo() {
           aria-label="Go to home page"
         >
           <img
-            src="/constellation-io/cio.png" 
+            src="/cio.png" 
             alt="Constellation IO Logo"
             style={{
               height: 35, 

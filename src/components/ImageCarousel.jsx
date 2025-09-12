@@ -50,10 +50,10 @@ function ImageCarousel() {
         align="center"
       >
         {[
-          { src: '/constellation-io/spacex.png', alt: 'SpaceX' },
-          { src: '/constellation-io/nasa.png', alt: 'NASA' },
-          { src: '/constellation-io/ncsa.png', alt: 'NCSA' },
-          { src: '/constellation-io/blue.png', alt: 'Blue Origin' },
+          { src: '/spacex.png', alt: 'SpaceX' },
+          { src: '/nasa.png', alt: 'NASA' },
+          { src: '/ncsa.png', alt: 'NCSA' },
+          { src: '/blue.png', alt: 'Blue Origin' },
         ].map((item, index) => (
           <Carousel.Slide key={index}>
             <Box

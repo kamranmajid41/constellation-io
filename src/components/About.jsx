@@ -204,7 +204,7 @@ function About() {
             style={{ backgroundColor: 'rgba(255, 255, 255, 0.03)', borderColor: 'rgba(255, 255, 255, 0.08)' }}>
             <Stack align="center" spacing="sm">
               <Image
-                src='/constellation-io/kam_headshot.jpeg'
+                src='/kam_headshot.jpeg'
                 alt="Kamran Majid"
                 radius="50%"
                 width={120}
@@ -228,7 +228,7 @@ function About() {
             style={{ backgroundColor: 'rgba(255, 255, 255, 0.03)', borderColor: 'rgba(255, 255, 255, 0.08)' }}>
             <Stack align="center" spacing="sm">
               <Image
-                src="/constellation-io/raaid.jpeg"
+                src="/raaid.jpeg"
                 alt="Raaid Kabir"
                 radius="50%"
                 width={120}
@@ -252,7 +252,7 @@ function About() {
             style={{ backgroundColor: 'rgba(255, 255, 255, 0.03)', borderColor: 'rgba(255, 255, 255, 0.08)' }}>
             <Stack align="center" spacing="sm">
               <Image
-                src="/constellation-io/omeed.jpeg"
+                src="/omeed.jpeg"
                 alt="Omeed Tehrani"
                 radius="50%"
                 width={120}
