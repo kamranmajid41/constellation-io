@@ -5,6 +5,7 @@ import { IconWorldDown, IconTargetArrow, IconSearch } from '@tabler/icons-react'
 import { useGlobalContext } from '../context/GlobalContext';
 
 import Satellites from './Satellites';
+import SatelliteMesh from './SatelliteMesh';
 import FlightTrajectory from './FlightTrajectory'; 
 import GroundStations from './GroundStations';
 import stations from '../data/satnogs_ground_stations.json';
@@ -19,8 +20,10 @@ function Globe() {
           showFlightPaths, 
           showCircuits, 
           showSatellites, 
+          showSatelliteMesh,
           showGroundStations, 
-          mapProjection
+          mapProjection,
+          selectedAsset
         } = useGlobalContext();
 
   const mapRef = useRef(null);
@@ -29,6 +32,7 @@ function Globe() {
   const [customTleData, setCustomTleData] = useState(null);
   const [mapLoaded, setMapLoaded] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [satellitePositions, setSatellitePositions] = useState([]);
 
   const initialViewState = {
     longitude: -122.4,
@@ -71,6 +75,10 @@ function Globe() {
     );
   };
 
+  const handleSatellitePositionsUpdate = (positions) => {
+    setSatellitePositions(positions);
+  };
+
   const handleSearch = async () => {
     if (!searchQuery) return;
 
@@ -106,12 +114,17 @@ function Globe() {
     >
       {mapLoaded && (
         <>
-          {(useDefaultConstellation) && 
+          {(useDefaultConstellation && showSatellites) && 
             <Satellites
               animationSpeed={animationSpeed}
-              isPaused={isPaused}
+              isPaused={isPaused || showSatelliteMesh}
               customTleData={customTleData}
+              onPositionsUpdate={handleSatellitePositionsUpdate}
           />}
+
+          {(useDefaultConstellation && showSatelliteMesh) && 
+            <SatelliteMesh satellitePositions={satellitePositions} />
+          }
 
          { showFlightPaths && 
          <FlightTrajectory
@@ -166,6 +179,35 @@ function Globe() {
             />
 
           </div>
+
+          {/* Selected Asset Label */}
+          {selectedAsset && (
+            <div
+              style={{
+                position: 'absolute',
+                top: 10,
+                right: 10,
+                backgroundColor: 'rgba(67, 67, 67, 0.9)',
+                padding: '8px 12px',
+                borderRadius: '6px',
+                color: 'white',
+                fontSize: '14px',
+                fontWeight: 'bold',
+                zIndex: 10000,
+                border: '2px solid #ff0000'
+              }}
+            >
+              <div style={{ fontSize: '12px', opacity: 0.8 }}>
+                {selectedAsset.type === 'satellite' ? '🛰️ Satellite' : '📡 Ground Station'}
+              </div>
+              <div>{selectedAsset.data?.name || selectedAsset.id}</div>
+              {selectedAsset.data?.altitude && (
+                <div style={{ fontSize: '12px', opacity: 0.8 }}>
+                  Altitude: {selectedAsset.data.altitude.toFixed(1)} km
+                </div>
+              )}
+            </div>
+          )}
 
         </>
       )}

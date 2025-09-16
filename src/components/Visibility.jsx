@@ -8,14 +8,27 @@ import {
 function Visibility () {
 
     const {
+        showSatellites, setShowSatellites,
+        showSatelliteMesh, setShowSatelliteMesh,
         showFlightPaths, setShowFlightPaths,
         showGroundStations, setShowGroundStations,
-        showGroundStationLabels, setShowGroundStationLabels, 
+        showGroundStationLabels, setShowGroundStationLabels,
+        showGroundStationConnections, setShowGroundStationConnections,
         mapProjection, setMapProjection
     } = useGlobalContext(); 
 
     return (
         <>
+            <Checkbox
+                label="Show satellites"
+                checked={showSatellites}
+                onChange={(e) => setShowSatellites(e.currentTarget.checked)}
+            />
+            <Checkbox
+                label="Show satellite laser mesh"
+                checked={showSatelliteMesh}
+                onChange={(e) => setShowSatelliteMesh(e.currentTarget.checked)}
+            />
             <Checkbox
                 label="Show flight paths"
                 checked={showFlightPaths}
@@ -30,6 +43,11 @@ function Visibility () {
                 label="Show ground station labels"
                 checked={showGroundStationLabels}
                 onChange={(e) => setShowGroundStationLabels(e.currentTarget.checked)}
+            />
+            <Checkbox
+                label="Show ground station connections"
+                checked={showGroundStationConnections}
+                onChange={(e) => setShowGroundStationConnections(e.currentTarget.checked)}
             />
             <Button
                 variant='light'

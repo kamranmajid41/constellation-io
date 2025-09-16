@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Source, Layer, Marker } from 'react-map-gl/mapbox';
 import * as satellite from 'satellite.js';
+import { useGlobalContext } from '../context/GlobalContext';
 
 import tleData from '../data/starlink_tles.json';
 
@@ -17,7 +18,8 @@ const generateCircle = (latitude, longitude, radiusInDegrees = 0.1, numPoints = 
   return coordinates;
 };
 
-const Satellites = () => {
+const Satellites = ({ isPaused = false, onPositionsUpdate }) => {
+  const { selectedAsset, setSelectedAsset } = useGlobalContext();
   const [satellitePositions, setSatellitePositions] = useState([]);
   const lastUpdateRef = useRef(0); 
   const updateInterval = 10; 
@@ -56,6 +58,11 @@ const Satellites = () => {
   };
 
   useEffect(() => {
+    // Don't update positions when paused
+    if (isPaused) {
+      return;
+    }
+
     const interval = setInterval(() => {
       const currentTime = Date.now();
 
@@ -74,7 +81,14 @@ const Satellites = () => {
     }, updateInterval); 
 
     return () => clearInterval(interval);
-  }, []);
+  }, [isPaused]);
+
+  // Notify parent component when positions change
+  useEffect(() => {
+    if (onPositionsUpdate && satellitePositions.length > 0) {
+      onPositionsUpdate(satellitePositions);
+    }
+  }, [satellitePositions, onPositionsUpdate]);
 
   return (
     <>
@@ -99,11 +113,32 @@ const Satellites = () => {
           <Layer
             type="fill-extrusion"
             paint={{
-              'fill-extrusion-color': '#88f7f5', 
+              'fill-extrusion-color': [
+                'case',
+                ['==', ['get', 'name'], selectedAsset?.data?.name || ''],
+                '#ff0000', // Red for selected satellite
+                '#88f7f5'  // Default cyan color
+              ],
               'fill-extrusion-height': 550 * 1000, 
               'fill-extrusion-base': 545 * 1000, 
               'fill-extrusion-opacity': 0.9, 
-              'fill-extrusion-emissive-strength': 3
+              'fill-extrusion-emissive-strength': [
+                'case',
+                ['==', ['get', 'name'], selectedAsset?.data?.name || ''],
+                5, // Brighter for selected satellite
+                3  // Default brightness
+              ]
+            }}
+            onClick={(event) => {
+              const feature = event.features[0];
+              if (feature) {
+                const satelliteData = satellitePositions.find(sat => sat.name === feature.properties.name);
+                setSelectedAsset({
+                  type: 'satellite',
+                  id: feature.properties.name,
+                  data: satelliteData
+                });
+              }
             }}
           />
         </Source>

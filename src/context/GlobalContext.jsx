@@ -13,11 +13,16 @@ export const GlobalProvider = ({ children }) => {
 
   // VISIBILITY CONTEXT
   const [showSatellites, setShowSatellites] = useState(false); 
+  const [showSatelliteMesh, setShowSatelliteMesh] = useState(false);
   const [showGroundStations, setShowGroundStations] = useState(false); 
   const [showFlightPaths, setShowFlightPaths] = useState(true); 
   const [showCircuits, setShowCircuits] = useState(false); 
   const [showGroundStationLabels, setShowGroundStationLabels] = useState(false);
-  const [mapProjection, setMapProjection] = useState('globe'); 
+  const [showGroundStationConnections, setShowGroundStationConnections] = useState(false);
+  const [mapProjection, setMapProjection] = useState('globe');
+
+  // SELECTED ASSET STATE
+  const [selectedAsset, setSelectedAsset] = useState(null); // { type: 'satellite'|'groundStation', id: string, data: object } 
 
   return (
     <GlobalContext.Provider value={{ 
@@ -30,11 +35,14 @@ export const GlobalProvider = ({ children }) => {
         enableDispersions, setEnableDispersions,
 
         showSatellites, setShowSatellites,
+        showSatelliteMesh, setShowSatelliteMesh,
         showGroundStations, setShowGroundStations,
         showFlightPaths, setShowFlightPaths,
         showCircuits, setShowCircuits,
         showGroundStationLabels, setShowGroundStationLabels,
-        mapProjection, setMapProjection
+        showGroundStationConnections, setShowGroundStationConnections,
+        mapProjection, setMapProjection,
+        selectedAsset, setSelectedAsset
         
     }}>
       {children}

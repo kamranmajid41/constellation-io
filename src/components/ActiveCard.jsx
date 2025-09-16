@@ -18,6 +18,7 @@ import { notifications } from '@mantine/notifications';
 import { useGlobalContext } from '../context/GlobalContext';
 import GroundStationsCard from './GroundStationsCard';
 import Visibility from './Visibility';
+import ScheduleJobs from './ScheduleJobs';
 import stationData from '../data/satnogs_ground_stations.json';
 import savedTrajectories from '../data/trajectories';
 
@@ -383,7 +384,41 @@ function ActiveCard({ activePanel, setActivePanel }) {
             )}
 
             {activePanel === 'schedule' && (
-              <Text size="sm" c="dimmed">This feature is not available in the demo!.</Text>
+              <div style={{ 
+                position: 'fixed', 
+                top: 0, 
+                left: 0, 
+                width: '100vw', 
+                height: '100vh', 
+                backgroundColor: 'rgba(0,0,0,0.8)', 
+                zIndex: 1000000001,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}>
+                <div style={{ 
+                  width: '90vw', 
+                  height: '90vh', 
+                  backgroundColor: '#1a1a1a', 
+                  borderRadius: '8px',
+                  overflow: 'auto',
+                  position: 'relative'
+                }}>
+                  <CloseButton 
+                    onClick={() => setActivePanel(null)} 
+                    size="lg" 
+                    style={{ 
+                      position: 'absolute', 
+                      top: 10, 
+                      right: 10, 
+                      zIndex: 1000000002,
+                      backgroundColor: 'rgba(0,0,0,0.5)',
+                      color: 'white'
+                    }} 
+                  />
+                  <ScheduleJobs />
+                </div>
+              </div>
             )}
           </Stack>
         </Card>
