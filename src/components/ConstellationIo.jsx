@@ -6,6 +6,7 @@ import {
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { Link, useNavigate } from 'react-router-dom'; // Import Link and useNavigate
+import { useGlobalContext } from '../context/GlobalContext';
 
 import Globe from './Globe';
 import Settings from './Settings';
@@ -44,15 +45,16 @@ function ConstellationIo() {
     <AppShell
       style={{
         height: '100vh',
+        width: '100vw',
         display: 'flex',
-        flexDirection: 'column',
-        position: 'absolute',
+        flexDirection: 'row',
+        position: 'fixed',
         top: 0,
         left: 0,
         overflow: 'hidden',
-        justifyContent: 'center',
-        alignItems: 'center',
         zIndex: 0,
+        margin: 0,
+        padding: 0,
       }}
       navbar={{ width: 66, breakpoint: 'sm' }}
     >
@@ -93,9 +95,13 @@ function ConstellationIo() {
       <AppShell.Main
         style={{
           height: '100vh',
+          flex: 1,
           overflow: 'hidden',
           display: 'flex',
           flexDirection: 'column',
+          position: 'relative',
+          margin: 0,
+          padding: 0,
         }}
       >
         <Globe />

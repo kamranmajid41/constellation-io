@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import Map from 'react-map-gl/mapbox';
 import { Button, ActionIcon, TextInput, Group } from '@mantine/core';
-import { IconWorldDown, IconTargetArrow, IconSearch } from '@tabler/icons-react';
+import { IconWorldDown, IconTargetArrow, IconSearch, IconRotate, IconPlayerPause } from '@tabler/icons-react';
 import { useGlobalContext } from '../context/GlobalContext';
 
 import Satellites from './Satellites';
@@ -23,16 +23,22 @@ function Globe() {
           showSatelliteMesh,
           showGroundStations, 
           mapProjection,
-          selectedAsset
+          selectedAsset,
+          isSidebarOpen
         } = useGlobalContext();
 
   const mapRef = useRef(null);
+  const lastAnimationTime = useRef(0);
   const [animationSpeed, setAnimationSpeed] = useState(1);
   const [isPaused, setIsPaused] = useState(false);
   const [customTleData, setCustomTleData] = useState(null);
   const [mapLoaded, setMapLoaded] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [satellitePositions, setSatellitePositions] = useState([]);
+  const [isUserInteracting, setIsUserInteracting] = useState(false);
+  const [autoRotateEnabled, setAutoRotateEnabled] = useState(true);
+  const [spinEnabled, setSpinEnabled] = useState(true);
+  const [isAnimating, setIsAnimating] = useState(false);
 
   const initialViewState = {
     longitude: -122.4,
@@ -53,6 +59,10 @@ function Globe() {
 
   const handleMapLoad = () => {
     setMapLoaded(true);
+    // Start rotation after map loads
+    setTimeout(() => {
+      spinGlobe();
+    }, 1000);
   };
 
   const handleGeolocation = () => {
@@ -101,16 +111,80 @@ function Globe() {
     }
   };
 
+  // Resize map when sidebar state changes
+  useEffect(() => {
+    if (mapRef.current && mapLoaded) {
+      setTimeout(() => {
+        mapRef.current.resize();
+      }, 10);
+    }
+  }, [isSidebarOpen, mapLoaded]);
+
+  // Rotation configuration
+  const secondsPerRevolution = 240; // Complete a revolution every minute
+  const maxSpinZoom = 5; // Above zoom level 5, do not rotate
+  const slowSpinZoom = 3; // Rotate at intermediate speeds between zoom levels 3 and 5
+
+  // Spin globe function using interval-based approach
+  useEffect(() => {
+    if (!mapLoaded || !spinEnabled || isUserInteracting) return;
+
+    const interval = setInterval(() => {
+      if (!mapRef.current || !spinEnabled || isUserInteracting) return;
+      
+      const zoom = mapRef.current.getZoom();
+      if (zoom < maxSpinZoom) {
+        let distancePerSecond = 360 / secondsPerRevolution;
+        if (zoom > slowSpinZoom) {
+          // Slow spinning at higher zooms
+          const zoomDif = (maxSpinZoom - zoom) / (maxSpinZoom - slowSpinZoom);
+          distancePerSecond *= zoomDif;
+        }
+        const center = mapRef.current.getCenter();
+        center.lng -= distancePerSecond; // Westward rotation
+        
+        // Smoothly animate the map over one second
+        mapRef.current.easeTo({ 
+          center, 
+          duration: 1000, 
+          easing: (n) => n 
+        });
+      }
+    }, 1000); // Rotate every second
+
+    return () => clearInterval(interval);
+  }, [mapLoaded, spinEnabled, isUserInteracting, secondsPerRevolution, maxSpinZoom, slowSpinZoom]);
+
+  // Handle user interaction detection
+  const handleUserInteractionStart = () => {
+    setIsUserInteracting(true);
+  };
+
+  const handleUserInteractionEnd = () => {
+    setIsUserInteracting(false);
+  };
+
   return (
     <Map
       ref={mapRef}
       mapboxAccessToken={MAPBOX_TOKEN}
       initialViewState={initialViewState}
-      style={{ height: '100vh', width: '98vw' }}
+      style={{ 
+        height: '100vh', 
+        width: isSidebarOpen ? 'calc(100vw - 600px)' : 'calc(100vw)',
+        position: 'absolute',
+        top: 0,
+        left: '66px',
+      }}
       mapStyle="mapbox://styles/kmajid24/cmbenh4hd004201ptfkp97j18"
       onLoad={handleMapLoad}
       attributionControl={false}
       projection={mapProjection}
+      onMouseDown={handleUserInteractionStart}
+      onMouseUp={handleUserInteractionEnd}
+      onDragEnd={handleUserInteractionEnd}
+      onPitchEnd={handleUserInteractionEnd}
+      onRotateEnd={handleUserInteractionEnd}
     >
       {mapLoaded && (
         <>
@@ -164,6 +238,20 @@ function Globe() {
 
             <ActionIcon variant="default" onClick={handleGeolocation} title="Find My Location">
               <IconTargetArrow  size={18}/>
+            </ActionIcon>
+
+            <ActionIcon 
+              variant={spinEnabled ? "filled" : "default"} 
+              onClick={() => {
+                setSpinEnabled(!spinEnabled);
+                if (!spinEnabled) {
+                  mapRef.current?.stop(); // Immediately end ongoing animation
+                }
+              }} 
+              title={spinEnabled ? "Pause Rotation" : "Start Rotation"}
+              color={spinEnabled ? "blue" : undefined}
+            >
+              {spinEnabled ? <IconRotate size={18}/> : <IconPlayerPause size={18}/>}
             </ActionIcon>
 
             <ActionIcon variant="default" onClick={handleSearch} title="Search">

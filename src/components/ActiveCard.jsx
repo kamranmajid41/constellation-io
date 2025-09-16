@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import JSZip from 'jszip'; 
 import {
   IconUpload,
@@ -31,7 +31,8 @@ function ActiveCard({ activePanel, setActivePanel }) {
           setCustomTleData, 
           beamwidth, setBeamwidth, 
           altitude, setAltitude,
-          enableDispersions, setEnableDispersions, 
+          enableDispersions, setEnableDispersions,
+          setIsSidebarOpen
         } = useGlobalContext();
 
   const [files, setFiles] = useState({
@@ -41,6 +42,15 @@ function ActiveCard({ activePanel, setActivePanel }) {
     kmz: null, 
   });
   const [selectedTrajectory, setSelectedTrajectory] = useState(null);
+
+  // Track sidebar state
+  useEffect(() => {
+    if(activePanel === 'schedule') {
+      setIsSidebarOpen(true);
+    } else {
+      setIsSidebarOpen(false);
+    }
+  }, [activePanel]);
   
 
   const parseKMLToGeoJSONFeatures = (kmlString, fileName) => {
@@ -247,7 +257,7 @@ function ActiveCard({ activePanel, setActivePanel }) {
 
   return (
     <>
-      {activePanel && (
+      {activePanel && activePanel !== 'schedule' && (
         <Card
           shadow="sm"
           padding="md"
@@ -383,45 +393,45 @@ function ActiveCard({ activePanel, setActivePanel }) {
               <Visibility/>
             )}
 
-            {activePanel === 'schedule' && (
-              <div style={{ 
-                position: 'fixed', 
-                top: 0, 
-                left: 0, 
-                width: '100vw', 
-                height: '100vh', 
-                backgroundColor: 'rgba(0,0,0,0.8)', 
-                zIndex: 1000000001,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center'
-              }}>
-                <div style={{ 
-                  width: '90vw', 
-                  height: '90vh', 
-                  backgroundColor: '#1a1a1a', 
-                  borderRadius: '8px',
-                  overflow: 'auto',
-                  position: 'relative'
-                }}>
-                  <CloseButton 
-                    onClick={() => setActivePanel(null)} 
-                    size="lg" 
-                    style={{ 
-                      position: 'absolute', 
-                      top: 10, 
-                      right: 10, 
-                      zIndex: 1000000002,
-                      backgroundColor: 'rgba(0,0,0,0.5)',
-                      color: 'white'
-                    }} 
-                  />
-                  <ScheduleJobs />
-                </div>
-              </div>
-            )}
           </Stack>
         </Card>
+      )}
+
+      {activePanel === 'schedule' && (
+        <div style={{ 
+          position: 'fixed', 
+          top: 0, 
+          right: 0, 
+          width: '600px', 
+          height: '100vh', 
+          backgroundColor: '#0f0f0f', 
+          zIndex: 1000000001,
+          overflow: 'auto',
+          borderLeft: '1px solid #2a2a2a',
+          boxShadow: '-8px 0 25px rgba(0,0,0,0.4)',
+          fontFamily: 'SF Mono, Monaco, "Cascadia Code", "Roboto Mono", Consolas, "Courier New", monospace'
+        }}>
+          <div style={{ 
+            position: 'relative',
+            height: '100%',
+            overflow: 'auto'
+          }}>
+            <CloseButton 
+              onClick={() => setActivePanel(null)} 
+              size="sm" 
+              style={{ 
+                position: 'absolute', 
+                top: 8, 
+                right: 8, 
+                zIndex: 1000000002,
+                backgroundColor: 'rgba(255,255,255,0.1)',
+                color: '#888',
+                border: '1px solid #333'
+              }} 
+            />
+            <ScheduleJobs />
+          </div>
+        </div>
       )}
     </>
   );

@@ -332,7 +332,7 @@ const SatelliteMesh = ({ satellitePositions = [] }) => {
           }
         } else {
           // For normal connections, create a thick rectangular polygon
-          const lineWidth = 0.008; // Width in degrees (increased from 0.002)
+          const lineWidth = 0.05; // Width in degrees (increased from 0.002)
           const halfWidth = lineWidth / 2;
           
           // Create a rectangle perpendicular to the line direction

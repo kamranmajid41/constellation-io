@@ -22,7 +22,10 @@ export const GlobalProvider = ({ children }) => {
   const [mapProjection, setMapProjection] = useState('globe');
 
   // SELECTED ASSET STATE
-  const [selectedAsset, setSelectedAsset] = useState(null); // { type: 'satellite'|'groundStation', id: string, data: object } 
+  const [selectedAsset, setSelectedAsset] = useState(null); // { type: 'satellite'|'groundStation', id: string, data: object }
+  
+  // SIDEBAR STATE
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false); 
 
   return (
     <GlobalContext.Provider value={{ 
@@ -42,7 +45,8 @@ export const GlobalProvider = ({ children }) => {
         showGroundStationLabels, setShowGroundStationLabels,
         showGroundStationConnections, setShowGroundStationConnections,
         mapProjection, setMapProjection,
-        selectedAsset, setSelectedAsset
+        selectedAsset, setSelectedAsset,
+        isSidebarOpen, setIsSidebarOpen
         
     }}>
       {children}

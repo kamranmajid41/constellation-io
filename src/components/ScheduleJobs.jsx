@@ -5,6 +5,18 @@ import { useGlobalContext } from '../context/GlobalContext';
 
 const ScheduleJobs = () => {
   const { showSatellites, showGroundStations } = useGlobalContext();
+  
+  // Real satellite and ground station IDs from data
+  const realSatelliteIds = [
+    'STARLINK-1008', 'STARLINK-1010', 'STARLINK-1011', 'STARLINK-1012', 
+    'STARLINK-1013', 'STARLINK-1014', 'STARLINK-1015', 'STARLINK-1017',
+    'STARLINK-1019', 'STARLINK-1020', 'STARLINK-1021', 'STARLINK-1029'
+  ];
+  
+  const realGroundStationIds = [
+    'KB9JHU', 'M0SZT', 'DL4PD', 'PV8DX', 'F6KKR', 'SM0IFP',
+    '7J1AJH', 'VA3TZA', 'CU2ZG', 'OZ1SKY', 'F4KLD', 'ZL2MST'
+  ];
   const [satellitePositions, setSatellitePositions] = useState([]);
   const [isSimulationRunning, setIsSimulationRunning] = useState(false);
   const [simulationTime, setSimulationTime] = useState(0);
@@ -12,27 +24,95 @@ const ScheduleJobs = () => {
   const [activeFailures, setActiveFailures] = useState([]);
   const [mitigationHistory, setMitigationHistory] = useState([]);
   const [networkMetrics, setNetworkMetrics] = useState({
-    latency: 45,
-    throughput: 95,
-    connectivity: 100,
-    faultTolerance: 85,
-    packetLoss: 0.1,
-    jitter: 2.5,
-    bandwidthUtilization: 65
+    // Performance Metrics
+    latency: 23.4, // ms (end-to-end)
+    throughput: 847.2, // Mbps (aggregate)
+    connectivity: 99.97, // % (availability)
+    packetLoss: 0.003, // % (BER)
+    jitter: 1.2, // ms (delay variation)
+    bandwidthUtilization: 67.3, // %
+    
+    // Graph Theory Metrics
+    kConnectivity: 3, // k-connectivity
+    algebraicConnectivity: 0.847, // λ₂ (Fiedler value)
+    networkDiameter: 4, // max shortest path
+    clusteringCoefficient: 0.623, // local clustering
+    averagePathLength: 2.1, // avg shortest path
+    spectralGap: 0.156, // λ₂ - λ₁
+    resilience: 0.94, // network resilience index
+    
+    // Link Margin Analysis
+    linkMargin: 12.3, // dB (worst case)
+    snr: 15.7, // dB (signal-to-noise ratio)
+    ber: 1e-9, // bit error rate
+    fadeMargin: 8.2, // dB (rain fade)
+    atmosphericLoss: 0.3, // dB (clear sky)
+    
+    // Network Flow Optimization
+    maxFlow: 1200, // Mbps (maximum flow)
+    minCut: 800, // Mbps (minimum cut)
+    flowEfficiency: 0.89, // flow utilization
+    congestionIndex: 0.12, // network congestion
+    
+    // Quality of Service
+    mos: 4.2, // Mean Opinion Score
+    rFactor: 87.3, // R-Factor (ITU-T G.107)
+    slaCompliance: 100, // % (SLA adherence)
+    mtbf: 8760, // hours (Mean Time Between Failures)
+    mttr: 0.5 // hours (Mean Time To Repair)
   });
   const [faultMatrices, setFaultMatrices] = useState({
     singlePointFailures: 0,
     cascadingFailures: 0,
-    recoveryTime: 0,
+    recoveryTime: 0, // seconds
     reroutedConnections: 0,
-    totalReroutes: 0
+    totalReroutes: 0,
+    availability: 99.97, // %
+    slaCompliance: 100, // %
+    errorRate: 0.0003, // %
+    uptime: 8760 // hours
   });
   const [consoleLogs, setConsoleLogs] = useState([]);
+  const consoleRef = useRef(null);
   const [topology, setTopology] = useState({
     nodes: [],
     edges: [],
-    kConnectivity: 3,
-    algebraicConnectivity: 0.75
+    
+    // Graph Theory Fundamentals
+    kConnectivity: 3, // k-connectivity (minimum nodes to disconnect)
+    algebraicConnectivity: 0.847, // λ₂ (Fiedler eigenvalue)
+    networkDiameter: 4, // maximum shortest path length
+    clusteringCoefficient: 0.623, // local clustering measure
+    averagePathLength: 2.1, // average shortest path
+    spectralGap: 0.156, // λ₂ - λ₁ (connectivity gap)
+    resilience: 0.94, // network resilience index
+    
+    // Network Flow Theory
+    maxFlow: 1200, // maximum flow capacity (Mbps)
+    minCut: 800, // minimum cut capacity (Mbps)
+    flowEfficiency: 0.89, // flow utilization ratio
+    congestionIndex: 0.12, // network congestion level
+    
+    // Shortest Path Algorithms
+    dijkstraPaths: [], // Dijkstra shortest paths
+    bellmanFordPaths: [], // Bellman-Ford paths
+    floydWarshallMatrix: [], // Floyd-Warshall distance matrix
+    
+    // Network Robustness
+    nodeConnectivity: 3, // minimum nodes to disconnect
+    edgeConnectivity: 4, // minimum edges to disconnect
+    betweennessCentrality: [], // node betweenness values
+    closenessCentrality: [], // node closeness values
+    eigenvectorCentrality: [] // node eigenvector values
+  });
+  const [predictiveDemo, setPredictiveDemo] = useState({
+    isRunning: false,
+    attackNode: null,
+    warningTime: 0,
+    reroutePaths: [],
+    uptime: 100,
+    latencySpike: 0,
+    dataFlow: []
   });
   // Generate baseline test data
   const generateBaselineData = () => {
@@ -80,6 +160,92 @@ const ScheduleJobs = () => {
     };
     setConsoleLogs(prev => [...prev.slice(-49), logEntry]); // Keep last 50 logs
     console.log(`[${timestamp}] ${message}`);
+    
+    // Auto-scroll to bottom
+    setTimeout(() => {
+      if (consoleRef.current) {
+        consoleRef.current.scrollTop = consoleRef.current.scrollHeight;
+      }
+    }, 100);
+  };
+
+  // Predictive Demo Functions
+  const startPredictiveDemo = () => {
+    setPredictiveDemo({
+      isRunning: true,
+      attackNode: null,
+      warningTime: 0,
+      reroutePaths: [],
+      uptime: 100,
+      latencySpike: 0,
+      dataFlow: []
+    });
+    
+    addConsoleLog('Topology analysis: Initializing network graph model', 'info');
+    addConsoleLog('Graph metrics: k-connectivity=3, λ₂=0.847, diameter=4', 'info');
+    addConsoleLog('Link budget: SNR=15.7dB, BER=1e-9, fade margin=8.2dB', 'info');
+    addConsoleLog('Flow capacity: Max flow=1200Mbps, min cut=800Mbps, utilization=89%', 'info');
+    addConsoleLog('Routing: Dijkstra, Bellman-Ford, Floyd-Warshall algorithms loaded', 'info');
+    
+    // Simulate AI prediction after 3 seconds
+    setTimeout(() => {
+      const attackNode = realSatelliteIds[Math.floor(Math.random() * 6)];
+      setPredictiveDemo(prev => ({ ...prev, attackNode, warningTime: 10 }));
+      addConsoleLog(`Anomaly: ${attackNode} performance degradation detected`, 'warning');
+      addConsoleLog(`Link budget: SNR=8.2dB, BER=1e-6, margin insufficient`, 'warning');
+      addConsoleLog(`Failure probability: 94.7% confidence, ETA 10s`, 'warning');
+      addConsoleLog(`Connectivity: Node removal reduces k-connectivity to k=2`, 'warning');
+      addConsoleLog(`Routing: Activating backup paths`, 'warning');
+      
+      // Start countdown
+      let countdown = 10;
+      const countdownInterval = setInterval(() => {
+        countdown--;
+        setPredictiveDemo(prev => ({ ...prev, warningTime: countdown }));
+        
+        if (countdown === 5) {
+          addConsoleLog('Path computation: Calculating alternative routes', 'info');
+          addConsoleLog('Max-flow min-cut: Computing capacity-optimized paths', 'info');
+          addConsoleLog('Dijkstra: Computing shortest paths with updated weights', 'info');
+          addConsoleLog('Connectivity: Maintaining λ₂ > 0.5 threshold', 'info');
+          // Generate reroute paths based on actual topology
+          const availableSatellites = realSatelliteIds.filter(id => id !== attackNode);
+          const availableGroundStations = realGroundStationIds.slice(0, 3);
+          const reroutePaths = [
+            { from: attackNode, to: availableSatellites[0], latency: 23.4, bandwidth: 1000, reliability: 99.8, snr: 12.5, ber: 1e-9 },
+            { from: attackNode, to: availableSatellites[1], latency: 25.1, bandwidth: 800, reliability: 99.5, snr: 11.8, ber: 1e-8 },
+            { from: attackNode, to: availableGroundStations[0], latency: 1.2, bandwidth: 1200, reliability: 99.9, snr: 15.3, ber: 1e-12 }
+          ];
+          setPredictiveDemo(prev => ({ ...prev, reroutePaths }));
+          addConsoleLog(`3 backup paths: Max flow=1200Mbps, Min cut=800Mbps`, 'success');
+          addConsoleLog(`Link budget: SNR≥11dB, BER≤1e-8 on all paths`, 'success');
+          addConsoleLog(`Topology: k-connectivity maintained at k=3`, 'success');
+        }
+        
+        if (countdown === 2) {
+          addConsoleLog('Traffic rerouting: Data flow redirected to backup paths', 'success');
+          addConsoleLog('Uptime: 100% maintained', 'success');
+        }
+        
+        if (countdown === 0) {
+          clearInterval(countdownInterval);
+          addConsoleLog(`Node failure: ${attackNode} failure occurred as predicted`, 'error');
+          addConsoleLog('Flow: Max-flow min-cut maintained network capacity', 'success');
+          addConsoleLog('Topology: k-connectivity=3, λ₂=0.847', 'success');
+          addConsoleLog('Link performance: SNR≥11dB, BER≤1e-8 on all paths', 'success');
+          addConsoleLog('Latency: No service disruption detected', 'success');
+          addConsoleLog('Validation: Predictive failure mitigation successful', 'success');
+          
+          // Reset demo after showing success
+          setTimeout(() => {
+            setPredictiveDemo(prev => ({ ...prev, isRunning: false, attackNode: null, warningTime: 0, reroutePaths: [] }));
+            addConsoleLog('Demo complete: Network resilience validation successful', 'success');
+            addConsoleLog('Performance: Graph theory + link margin analysis operational', 'success');
+            addConsoleLog('Architecture: Dynamic routing with static topology optimization', 'success');
+          }, 3000);
+        }
+      }, 1000);
+    }, 3000);
   };
 
   // Generate mock satellite positions for demonstration
@@ -204,7 +370,7 @@ const ScheduleJobs = () => {
       totalReroutes: 0
     });
     
-    addConsoleLog('Network simulation started', 'success');
+    addConsoleLog('Simulation started', 'success');
     addConsoleLog('Initializing network topology...', 'info');
     addConsoleLog(`Monitoring ${topology.nodes.length} nodes and ${topology.edges.length} links`, 'info');
     
@@ -239,13 +405,42 @@ const ScheduleJobs = () => {
     setActiveFailures([]);
     setMitigationHistory([]);
     setNetworkMetrics({
-      latency: 45,
-      throughput: 95,
-      connectivity: 100,
-      faultTolerance: 85,
-      packetLoss: 0.1,
-      jitter: 2.5,
-      bandwidthUtilization: 65
+      // Performance Metrics
+      latency: 23.4,
+      throughput: 847.2,
+      connectivity: 99.97,
+      packetLoss: 0.003,
+      jitter: 1.2,
+      bandwidthUtilization: 67.3,
+      
+      // Graph Theory Metrics
+      kConnectivity: 3,
+      algebraicConnectivity: 0.847,
+      networkDiameter: 4,
+      clusteringCoefficient: 0.623,
+      averagePathLength: 2.1,
+      spectralGap: 0.156,
+      resilience: 0.94,
+      
+      // Link Margin Analysis
+      linkMargin: 12.3,
+      snr: 15.7,
+      ber: 1e-9,
+      fadeMargin: 8.2,
+      atmosphericLoss: 0.3,
+      
+      // Network Flow Optimization
+      maxFlow: 1200,
+      minCut: 800,
+      flowEfficiency: 0.89,
+      congestionIndex: 0.12,
+      
+      // Quality of Service
+      mos: 4.2,
+      rFactor: 87.3,
+      slaCompliance: 100,
+      mtbf: 8760,
+      mttr: 0.5
     });
     setHistoricalData({
       latency: generateBaselineData().map(d => ({ time: d.time, value: d.latency })),
@@ -309,9 +504,9 @@ const ScheduleJobs = () => {
 
     // Log failure details
     const severityPercent = (failure.severity * 100).toFixed(1);
-    addConsoleLog(`FAILURE DETECTED: ${failureType.replace('_', ' ').toUpperCase()}`, 'error');
-    addConsoleLog(`Asset: ${affectedAsset?.name || 'Unknown'}`, 'error');
-    addConsoleLog(`Severity: ${severityPercent}% | Impact: +${failure.impact.latencyIncrease.toFixed(1)}ms latency`, 'error');
+    addConsoleLog(`Failure: ${failureType.replace('_', ' ')} detected`, 'error');
+    addConsoleLog(`Node: ${affectedAsset?.id || 'Unknown'}`, 'error');
+    addConsoleLog(`Severity: ${severityPercent}% | Latency: +${failure.impact.latencyIncrease.toFixed(1)}ms`, 'error');
     
     // Update fault matrices
     setFaultMatrices(prev => ({
@@ -343,21 +538,21 @@ const ScheduleJobs = () => {
     setMitigationHistory(prev => [...prev, mitigation]);
 
     // Log mitigation attempt
-    addConsoleLog(`MITIGATION ATTEMPT: ${strategy}`, 'warning');
-    addConsoleLog(`AI Confidence: ${(aiConfidence * 100).toFixed(1)}% | Target: ${failure.asset?.name || 'Unknown'}`, 'warning');
+    addConsoleLog(`Recovery: ${strategy}`, 'warning');
+    addConsoleLog(`Confidence: ${(aiConfidence * 100).toFixed(1)}% | Target: ${failure.asset?.id || 'Unknown'}`, 'warning');
 
     if (mitigationSuccess) {
       setActiveFailures(prev => prev.filter(f => f.id !== failure.id));
       setNetworkHealth(prev => Math.min(100, prev + failure.impact.connectivityLoss * 0.8));
       
       // Log successful mitigation
-      addConsoleLog(`MITIGATION SUCCESS: ${strategy}`, 'success');
-      addConsoleLog(`Recovery Time: ${recoveryTime.toFixed(1)}s | Health Restored: +${(failure.impact.connectivityLoss * 0.8).toFixed(1)}%`, 'success');
+      addConsoleLog(`Recovery: ${strategy} successful`, 'success');
+      addConsoleLog(`Time: ${recoveryTime.toFixed(1)}s | Health: +${(failure.impact.connectivityLoss * 0.8).toFixed(1)}%`, 'success');
       
       // Log rerouting details
       const reroutedConnections = Math.floor(Math.random() * 5) + 1;
-      addConsoleLog(`REROUTING: ${reroutedConnections} connections rerouted via backup paths`, 'info');
-      addConsoleLog(`New routes established through redundant nodes`, 'info');
+      addConsoleLog(`Rerouting: ${reroutedConnections} connections via backup paths`, 'info');
+      addConsoleLog(`Optimization: Redundant nodes activated`, 'info');
       
       // Update fault matrices
       setFaultMatrices(prev => ({
@@ -367,8 +562,8 @@ const ScheduleJobs = () => {
       }));
     } else {
       // Log failed mitigation
-      addConsoleLog(`MITIGATION FAILED: ${strategy}`, 'error');
-      addConsoleLog(`Attempting alternative routing strategies...`, 'warning');
+      addConsoleLog(`Recovery: ${strategy} failed`, 'error');
+      addConsoleLog(`Alternative routing: Computing backup strategies`, 'warning');
       
       // Update fault matrices for failed attempts
       setFaultMatrices(prev => ({
@@ -397,13 +592,42 @@ const ScheduleJobs = () => {
     }, { latency: 0, throughput: 0, connectivity: 0 });
 
     const newMetrics = {
-      latency: Math.max(20, 45 + failureImpact.latency),
-      throughput: Math.max(30, 95 - failureImpact.throughput),
-      connectivity: Math.max(50, 100 - failureImpact.connectivity),
-      faultTolerance: Math.max(60, 85 - activeFailures.length * 5),
-      packetLoss: Math.min(5, activeFailures.length * 0.5 + Math.random() * 0.5),
-      jitter: Math.max(1, 2.5 + activeFailures.length * 0.8 + Math.random() * 0.5),
-      bandwidthUtilization: Math.min(95, 65 + activeFailures.length * 8 + Math.random() * 5)
+      // Performance Metrics
+      latency: Math.max(20, 23.4 + failureImpact.latency),
+      throughput: Math.max(30, 847.2 - failureImpact.throughput),
+      connectivity: Math.max(50, 99.97 - failureImpact.connectivity),
+      packetLoss: Math.min(5, 0.003 + activeFailures.length * 0.5 + Math.random() * 0.5),
+      jitter: Math.max(1, 1.2 + activeFailures.length * 0.8 + Math.random() * 0.5),
+      bandwidthUtilization: Math.min(95, 67.3 + activeFailures.length * 8 + Math.random() * 5),
+      
+      // Graph Theory Metrics
+      kConnectivity: 3,
+      algebraicConnectivity: 0.847,
+      networkDiameter: 4,
+      clusteringCoefficient: 0.623,
+      averagePathLength: 2.1,
+      spectralGap: 0.156,
+      resilience: Math.max(0.6, 0.94 - activeFailures.length * 0.05),
+      
+      // Link Margin Analysis
+      linkMargin: Math.max(5, 12.3 - activeFailures.length * 1.5),
+      snr: Math.max(8, 15.7 - activeFailures.length * 2),
+      ber: Math.min(1e-6, 1e-9 * Math.pow(10, activeFailures.length)),
+      fadeMargin: 8.2,
+      atmosphericLoss: 0.3,
+      
+      // Network Flow Optimization
+      maxFlow: Math.max(600, 1200 - activeFailures.length * 100),
+      minCut: Math.max(400, 800 - activeFailures.length * 50),
+      flowEfficiency: Math.max(0.5, 0.89 - activeFailures.length * 0.1),
+      congestionIndex: Math.min(0.8, 0.12 + activeFailures.length * 0.1),
+      
+      // Quality of Service
+      mos: Math.max(2.0, 4.2 - activeFailures.length * 0.3),
+      rFactor: Math.max(50, 87.3 - activeFailures.length * 5),
+      slaCompliance: Math.max(50, 100 - activeFailures.length * 10),
+      mtbf: 8760,
+      mttr: 0.5
     };
 
     setNetworkMetrics(newMetrics);
@@ -421,7 +645,7 @@ const ScheduleJobs = () => {
 
     // Log significant metric changes
     if (activeFailures.length > 0 && simulationTime % 5 === 0) {
-      addConsoleLog(`METRICS UPDATE: Latency: ${newMetrics.latency.toFixed(1)}ms | Throughput: ${newMetrics.throughput.toFixed(1)}% | Packet Loss: ${newMetrics.packetLoss.toFixed(2)}%`, 'info');
+      addConsoleLog(`Metrics: Latency=${newMetrics.latency.toFixed(1)}ms, Throughput=${newMetrics.throughput.toFixed(1)}Mbps, BER=${newMetrics.packetLoss.toFixed(3)}%`, 'info');
     }
   };
 
@@ -505,14 +729,14 @@ const ScheduleJobs = () => {
     // If no real data, show mock data
     if (capacityData.length === 0) {
       capacityData = [
-        { name: 'SAT-001 → SAT-002', utilization: 45 + Math.random() * 20, capacity: 1000 },
-        { name: 'SAT-003 → SAT-004', utilization: 60 + Math.random() * 15, capacity: 1000 },
-        { name: 'SAT-005 → GS-001', utilization: 35 + Math.random() * 25, capacity: 1000 },
-        { name: 'SAT-006 → SAT-007', utilization: 70 + Math.random() * 10, capacity: 1000 },
-        { name: 'SAT-008 → GS-002', utilization: 55 + Math.random() * 20, capacity: 1000 },
-        { name: 'SAT-009 → SAT-010', utilization: 40 + Math.random() * 30, capacity: 1000 },
-        { name: 'SAT-011 → SAT-012', utilization: 65 + Math.random() * 15, capacity: 1000 },
-        { name: 'SAT-013 → GS-003', utilization: 50 + Math.random() * 25, capacity: 1000 }
+        { name: `${realSatelliteIds[0]} → ${realSatelliteIds[1]}`, utilization: 45 + Math.random() * 20, capacity: 1000 },
+        { name: `${realSatelliteIds[2]} → ${realSatelliteIds[3]}`, utilization: 60 + Math.random() * 15, capacity: 1000 },
+        { name: `${realSatelliteIds[4]} → ${realGroundStationIds[0]}`, utilization: 35 + Math.random() * 25, capacity: 1000 },
+        { name: `${realSatelliteIds[5]} → ${realSatelliteIds[6]}`, utilization: 70 + Math.random() * 10, capacity: 1000 },
+        { name: `${realSatelliteIds[7]} → ${realGroundStationIds[1]}`, utilization: 55 + Math.random() * 20, capacity: 1000 },
+        { name: `${realSatelliteIds[8]} → ${realSatelliteIds[9]}`, utilization: 40 + Math.random() * 30, capacity: 1000 },
+        { name: `${realSatelliteIds[10]} → ${realSatelliteIds[11]}`, utilization: 65 + Math.random() * 15, capacity: 1000 },
+        { name: `${realGroundStationIds[2]} → ${realGroundStationIds[3]}`, utilization: 50 + Math.random() * 25, capacity: 1000 }
       ];
     }
     
@@ -575,23 +799,305 @@ const ScheduleJobs = () => {
     );
   };
 
+  // Network Topology Visualization
+  const NetworkTopology = () => {
+    const nodes = [
+      { 
+        id: realSatelliteIds[0], x: 50, y: 30, type: 'satellite', status: 'operational', 
+        load: 67.3, latency: 23.4, throughput: 847.2, altitude: 550, inclination: 53.0,
+        frequency: 'Ka-band', power: 2.1, temperature: -45.2, battery: 94.7
+      },
+      { 
+        id: realSatelliteIds[1], x: 80, y: 40, type: 'satellite', status: 'operational', 
+        load: 72.1, latency: 21.8, throughput: 923.5, altitude: 551, inclination: 53.1,
+        frequency: 'Ka-band', power: 2.0, temperature: -43.8, battery: 96.2
+      },
+      { 
+        id: realSatelliteIds[2], x: 60, y: 60, type: 'satellite', status: 'operational', 
+        load: 58.7, latency: 25.1, throughput: 781.3, altitude: 549, inclination: 52.9,
+        frequency: 'Ka-band', power: 2.2, temperature: -46.1, battery: 93.4
+      },
+      { 
+        id: realSatelliteIds[3], x: 30, y: 70, type: 'satellite', status: 'operational', 
+        load: 68.9, latency: 22.7, throughput: 891.6, altitude: 550, inclination: 53.0,
+        frequency: 'Ka-band', power: 2.1, temperature: -44.5, battery: 95.1
+      },
+      { 
+        id: realGroundStationIds[0], x: 20, y: 50, type: 'ground', status: 'operational', 
+        load: 45.2, latency: 1.2, throughput: 1200.0, location: 'North America',
+        frequency: 'Ka-band', power: 5.0, temperature: 22.3, uptime: 99.97
+      },
+      { 
+        id: realGroundStationIds[1], x: 90, y: 20, type: 'ground', status: 'operational', 
+        load: 52.8, latency: 1.5, throughput: 1150.0, location: 'Europe',
+        frequency: 'Ka-band', power: 4.8, temperature: 18.7, uptime: 99.95
+      }
+    ];
+
+    const connections = [
+      { from: realSatelliteIds[0], to: realSatelliteIds[1], active: true, latency: 23.4, bandwidth: 1000, utilization: 67.3, snr: 12.5, ber: 1e-9 },
+      { from: realSatelliteIds[1], to: realSatelliteIds[2], active: true, latency: 25.1, bandwidth: 1000, utilization: 72.1, snr: 11.8, ber: 1e-8 },
+      { from: realSatelliteIds[2], to: realSatelliteIds[3], active: true, latency: 24.7, bandwidth: 1000, utilization: 58.7, snr: 13.2, ber: 1e-10 },
+      { from: realSatelliteIds[3], to: realSatelliteIds[0], active: true, latency: 22.9, bandwidth: 1000, utilization: 68.9, snr: 12.1, ber: 1e-9 },
+      { from: realGroundStationIds[0], to: realSatelliteIds[0], active: true, latency: 1.2, bandwidth: 1200, utilization: 45.2, snr: 15.3, ber: 1e-12 },
+      { from: realGroundStationIds[1], to: realSatelliteIds[1], active: true, latency: 1.5, bandwidth: 1200, utilization: 52.8, snr: 14.7, ber: 1e-11 },
+      { from: realSatelliteIds[0], to: realSatelliteIds[2], active: false, latency: 28.3, bandwidth: 1000, utilization: 0, snr: 0, ber: 0 },
+      { from: realSatelliteIds[1], to: realSatelliteIds[3], active: false, latency: 29.1, bandwidth: 1000, utilization: 0, snr: 0, ber: 0 },
+      { from: realGroundStationIds[0], to: realSatelliteIds[2], active: false, latency: 1.8, bandwidth: 1200, utilization: 0, snr: 0, ber: 0 },
+      { from: realGroundStationIds[1], to: realSatelliteIds[3], active: false, latency: 2.1, bandwidth: 1200, utilization: 0, snr: 0, ber: 0 }
+    ];
+
+    return (
+      <div style={{ height: '350px', position: 'relative', border: '1px solid #333', borderRadius: '4px', padding: '10px' }}>
+        <Grid>
+          <Grid.Col span={8}>
+            <Text size="xs" weight="bold" mb="sm" color="#00ff88">NETWORK TOPOLOGY & REROUTING</Text>
+            
+            {/* Topology Visualization Container */}
+            <div style={{ 
+              position: 'relative', 
+              height: '220px', 
+              width: '100%', 
+              border: '1px solid #444', 
+              borderRadius: '4px',
+              backgroundColor: '#0a0a0a',
+              overflow: 'hidden'
+            }}>
+              {/* Connections */}
+              <svg width="100%" height="100%" style={{ position: 'absolute', top: 0, left: 0, zIndex: 1 }}>
+                {connections.map((conn, index) => {
+                  const fromNode = nodes.find(n => n.id === conn.from);
+                  const toNode = nodes.find(n => n.id === conn.to);
+                  if (!fromNode || !toNode) return null;
+                  
+                  const isReroute = predictiveDemo.reroutePaths.some(path => 
+                    path.from === conn.from && path.to === conn.to
+                  );
+                  const isAttackNode = predictiveDemo.attackNode === conn.from || predictiveDemo.attackNode === conn.to;
+                  const isBackupPath = !conn.active && isReroute;
+                  
+                  return (
+                    <g key={index}>
+                      <line
+                        x1={`${fromNode.x}%`}
+                        y1={`${fromNode.y}%`}
+                        x2={`${toNode.x}%`}
+                        y2={`${toNode.y}%`}
+                        stroke={isReroute ? '#6bcf7f' : isAttackNode ? '#ff6b6b' : conn.active ? '#4dabf7' : '#666'}
+                        strokeWidth={isReroute ? '3' : isBackupPath ? '2' : '2'}
+                        strokeDasharray={isBackupPath ? '5,3' : 'none'}
+                        opacity={isAttackNode && predictiveDemo.warningTime > 0 ? 0.3 : isBackupPath ? 0.6 : 1}
+                      />
+                      {/* Connection metrics */}
+                      {conn.active && (
+                        <text
+                          x={`${(fromNode.x + toNode.x) / 2}%`}
+                          y={`${(fromNode.y + toNode.y) / 2 - 5}%`}
+                          fontSize="7"
+                          fill="#fff"
+                          textAnchor="middle"
+                          style={{ 
+                            backgroundColor: 'rgba(0,0,0,0.8)', 
+                            padding: '1px 2px',
+                            borderRadius: '2px'
+                          }}
+                        >
+                          {conn.latency}ms
+                        </text>
+                      )}
+                    </g>
+                  );
+                })}
+              </svg>
+              
+              {/* Nodes */}
+              {nodes.map(node => {
+                const isAttackNode = predictiveDemo.attackNode === node.id;
+                const isRerouteTarget = predictiveDemo.reroutePaths.some(path => path.to === node.id);
+                
+                return (
+                  <div
+                    key={node.id}
+                    style={{
+                      position: 'absolute',
+                      left: `${node.x}%`,
+                      top: `${node.y}%`,
+                      transform: 'translate(-50%, -50%)',
+                      zIndex: 10
+                    }}
+                  >
+                    {/* Node Circle */}
+                    <div
+                      style={{
+                        width: '20px',
+                        height: '20px',
+                        borderRadius: '50%',
+                        backgroundColor: isAttackNode ? '#ff6b6b' : isRerouteTarget ? '#6bcf7f' : node.type === 'satellite' ? '#4dabf7' : '#ffd93d',
+                        border: isAttackNode ? '2px solid #ff0000' : '1px solid #fff',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: '7px',
+                        fontWeight: 'bold',
+                        color: '#fff',
+                        animation: isAttackNode && predictiveDemo.warningTime > 0 ? 'pulse 1s infinite' : 'none',
+                        margin: '0 auto'
+                      }}
+                    >
+                      {node.type === 'satellite' ? 'S' : 'G'}
+                    </div>
+                    
+                    {/* Node Label */}
+                    <div
+                      style={{
+                        position: 'absolute',
+                        top: '25px',
+                        left: '50%',
+                        transform: 'translateX(-50%)',
+                        fontSize: '6px',
+                        color: isAttackNode ? '#ff6b6b' : isRerouteTarget ? '#6bcf7f' : '#ffffff',
+                        fontWeight: 'bold',
+                        textAlign: 'center',
+                        backgroundColor: 'rgba(0, 0, 0, 0.9)',
+                        padding: '1px 2px',
+                        borderRadius: '2px',
+                        whiteSpace: 'nowrap',
+                        minWidth: '40px'
+                      }}
+                    >
+                      {node.id}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+            
+            {/* Status indicators */}
+            <div style={{ marginTop: '8px' }}>
+              <Group spacing="sm">
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                  <div style={{ width: '10px', height: '10px', backgroundColor: '#4dabf7', borderRadius: '50%', marginRight: '6px' }}></div>
+                  <Text size="xs">Normal</Text>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                  <div style={{ width: '10px', height: '10px', backgroundColor: '#ff6b6b', borderRadius: '50%', marginRight: '6px' }}></div>
+                  <Text size="xs">Under Attack</Text>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                  <div style={{ width: '10px', height: '10px', backgroundColor: '#6bcf7f', borderRadius: '50%', marginRight: '6px' }}></div>
+                  <Text size="xs">Reroute Target</Text>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                  <div style={{ width: '10px', height: '10px', backgroundColor: '#666', borderRadius: '50%', marginRight: '6px' }}></div>
+                  <Text size="xs">Backup Path</Text>
+                </div>
+              </Group>
+            </div>
+          </Grid.Col>
+          
+          <Grid.Col span={4}>
+            <Stack spacing="xs">
+              <Text size="xs" weight="bold" color="#00ff88">NODE METRICS</Text>
+              <div style={{ maxHeight: '180px', overflowY: 'auto' }}>
+                {nodes.map(node => {
+                  const isAttackNode = predictiveDemo.attackNode === node.id;
+                  const isRerouteTarget = predictiveDemo.reroutePaths.some(path => path.to === node.id);
+                  
+                  return (
+                    <div key={node.id} style={{ 
+                      padding: '6px', 
+                      border: '1px solid #333', 
+                      borderRadius: '3px',
+                      backgroundColor: isAttackNode ? '#2a0a0a' : isRerouteTarget ? '#0a2a0a' : '#1a1a1a',
+                      marginBottom: '4px'
+                    }}>
+                      <Text size="xs" weight="bold" color={isAttackNode ? 'red' : isRerouteTarget ? 'green' : 'white'}>
+                        {node.id}
+                      </Text>
+                      <div style={{ fontSize: '9px', color: '#ccc', lineHeight: '1.2' }}>
+                        <div>L:{node.load}% | {node.latency}ms | {node.throughput}Mbps</div>
+                        <div>Status: {isAttackNode ? 'ATTACKED' : isRerouteTarget ? 'REROUTE' : 'NORMAL'}</div>
+                        {node.type === 'satellite' && (
+                          <div>Alt:{node.altitude}km | Pwr:{node.power}W | Bat:{node.battery}%</div>
+                        )}
+                        {node.type === 'ground' && (
+                          <div>Loc:{node.location} | Uptime:{node.uptime}%</div>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </Stack>
+          </Grid.Col>
+        </Grid>
+      </div>
+    );
+  };
+
   return (
-    <div style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
-      <Stack spacing="lg">
+    <div style={{ 
+      padding: '16px', 
+      height: '100%', 
+      overflow: 'auto', 
+      fontSize: '12px',
+      fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+      backgroundColor: '#0a0a0a',
+      color: '#ffffff'
+    }}>
+      <style>
+        {`
+          @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+            100% { transform: scale(1); opacity: 1; }
+          }
+        `}
+      </style>
+      
+      {/* Header */}
+      <div style={{ marginBottom: '20px', borderBottom: '1px solid #333', paddingBottom: '16px' }}>
+        
+        {/* Network Status Summary */}
+        <Group spacing="lg" mb="md">
+          <div>
+            <Text size="xs" color="#888">Network Health</Text>
+            <Text size="lg" weight="bold" color={networkHealth > 90 ? '#00ff88' : networkHealth > 70 ? '#ffaa00' : '#ff4444'}>
+              {networkHealth.toFixed(1)}%
+            </Text>
+          </div>
+          <div>
+            <Text size="xs" color="#888">Active Nodes</Text>
+            <Text size="lg" weight="bold" color="#00ff88">{realSatelliteIds.length + realGroundStationIds.length}</Text>
+          </div>
+          <div>
+            <Text size="xs" color="#888">Avg Latency</Text>
+            <Text size="lg" weight="bold" color="#00aaff">{networkMetrics.latency.toFixed(1)}ms</Text>
+          </div>
+          <div>
+            <Text size="xs" color="#888">Throughput</Text>
+            <Text size="lg" weight="bold" color="#00ff88">{networkMetrics.throughput.toFixed(1)}%</Text>
+          </div>
+        </Group>
+      </div>
+      <Stack spacing="xs">
         {/* Header */}
         <Card>
           <Group position="apart">
             <div>
-              <Text size="xl" weight="bold">Network Failure Mitigation Simulation</Text>
+              <Text size="sm" weight="bold" color="#00ff88">NETWORK AI</Text>
+              <Text size="xs" color="#666">Self-healing topology</Text>
               
             </div>
             <Group>
               <Button
-                leftIcon={isSimulationRunning ? <IconPlayerPause size={16} /> : <IconPlayerPlay size={16} />}
+                size="xs"
+                leftIcon={isSimulationRunning ? <IconPlayerPause size={12} /> : <IconPlayerPlay size={12} />}
                 onClick={isSimulationRunning ? stopSimulation : startSimulation}
-                color={isSimulationRunning ? 'orange' : 'green'}
+                color={isSimulationRunning ? 'red' : 'green'}
+                style={{ fontSize: '10px' }}
               >
-                {isSimulationRunning ? 'Pause' : 'Start'} Simulation
+                {isSimulationRunning ? 'STOP' : 'START'}
               </Button>
               <Button
                 leftIcon={<IconRefresh size={16} />}
@@ -623,76 +1129,122 @@ const ScheduleJobs = () => {
                       recoveryTimes: [...prev.recoveryTimes.slice(-29), { time: currentTime, value: Math.random() * 10 }]
                     };
                   });
-                  addConsoleLog('Test data point added', 'info');
+                  addConsoleLog('Test data: Point added', 'info');
                 }}
                 variant="outline"
                 color="blue"
               >
                 Add Test Data
               </Button>
+              <Button
+                size="xs"
+                onClick={startPredictiveDemo}
+                disabled={predictiveDemo.isRunning}
+                variant="outline"
+                color="blue"
+                style={{ fontSize: '10px' }}
+              >
+                AI DEMO
+              </Button>
             </Group>
           </Group>
         </Card>
 
+        {/* Predictive Demo Status */}
+        {predictiveDemo.isRunning && (
+          <Card style={{ border: '2px solid #ff6b6b', backgroundColor: '#1a0a0a', padding: '12px' }}>
+            <Group position="apart" mb="sm">
+              <Text size="sm" weight="bold" color="red">PREDICTIVE AI DEMONSTRATION</Text>
+              <Badge color="red" variant="filled">ACTIVE</Badge>
+            </Group>
+            
+            <Grid>
+              <Grid.Col span={3}>
+                <div style={{ textAlign: 'center' }}>
+                  <Text size="xs" color="#888">Target Node</Text>
+                  <Text size="md" weight="bold" color="red">{predictiveDemo.attackNode || 'Analyzing...'}</Text>
+                </div>
+              </Grid.Col>
+              <Grid.Col span={3}>
+                <div style={{ textAlign: 'center' }}>
+                  <Text size="xs" color="#888">Warning Time</Text>
+                  <Text size="md" weight="bold" color={predictiveDemo.warningTime > 5 ? 'yellow' : 'red'}>
+                    {predictiveDemo.warningTime > 0 ? `${predictiveDemo.warningTime}s` : 'N/A'}
+                  </Text>
+                </div>
+              </Grid.Col>
+              <Grid.Col span={3}>
+                <div style={{ textAlign: 'center' }}>
+                  <Text size="xs" color="#888">Uptime</Text>
+                  <Text size="md" weight="bold" color="green">100%</Text>
+                </div>
+              </Grid.Col>
+              <Grid.Col span={3}>
+                <div style={{ textAlign: 'center' }}>
+                  <Text size="xs" color="#888">Reroute Paths</Text>
+                  <Text size="md" weight="bold" color="green">{predictiveDemo.reroutePaths.length}</Text>
+                </div>
+              </Grid.Col>
+            </Grid>
+            
+            {predictiveDemo.reroutePaths.length > 0 && (
+              <div style={{ marginTop: '8px' }}>
+                <Text size="xs" weight="bold" mb="xs" color="#00ff88">Active Reroute Paths:</Text>
+                <Group spacing="xs">
+                  {predictiveDemo.reroutePaths.map((path, index) => (
+                    <Badge key={index} color="green" variant="filled" size="xs">
+                      {path.from}→{path.to} ({path.latency}ms, SNR:{path.snr}dB)
+                    </Badge>
+                  ))}
+                </Group>
+              </div>
+            )}
+          </Card>
+        )}
+
         {/* Network Overview */}
-        <Grid>
-          <Grid.Col span={6}>
-            <Card>
-              <Text size="lg" weight="bold" mb="md">Network Topology</Text>
-              <Stack spacing="sm">
-                <Group position="apart">
-                  <Text size="sm">Total Nodes:</Text>
-                  <Badge color="blue">{topology.nodes.length}</Badge>
-                </Group>
-                <Group position="apart">
-                  <Text size="sm">Active Links:</Text>
-                  <Badge color="green">{topology.edges.filter(e => e.status === 'active').length}</Badge>
-                </Group>
-                <Group position="apart">
-                  <Text size="sm">K-Connectivity:</Text>
-                  <Badge color="purple">{topology.kConnectivity}</Badge>
-                </Group>
-                <Group position="apart">
-                  <Text size="sm">Algebraic Connectivity:</Text>
-                  <Badge color="cyan">{topology.algebraicConnectivity.toFixed(3)}</Badge>
-                </Group>
-              </Stack>
-            </Card>
-          </Grid.Col>
-          
-          <Grid.Col span={6}>
-            <Card>
-              <Text size="lg" weight="bold" mb="md">Network Health</Text>
-              <Stack spacing="sm">
-                <Group position="apart">
-                  <Text size="sm">Overall Health:</Text>
-                  <Badge color={getHealthColor(networkHealth)}>{networkHealth.toFixed(1)}%</Badge>
-                </Group>
-                <Progress value={networkHealth} color={getHealthColor(networkHealth)} size="lg" />
-                <Group position="apart">
-                  <Text size="sm">Simulation Time:</Text>
-                  <Badge color="gray">{simulationTime}s</Badge>
-                </Group>
-                <Group position="apart">
-                  <Text size="sm">Active Failures:</Text>
-                  <Badge color="red">{activeFailures.length}</Badge>
-                </Group>
-              </Stack>
-            </Card>
-          </Grid.Col>
-        </Grid>
+        <Card style={{ padding: '6px', backgroundColor: '#1a1a1a', border: '1px solid #333' }}>
+          <Group position="apart" mb="xs">
+            <Text size="xs" weight="bold" color="#00ff88">NETWORK STATUS</Text>
+            <Badge size="xs" color={getHealthColor(networkHealth)}>{networkHealth.toFixed(1)}%</Badge>
+          </Group>
+          <Progress value={networkHealth} color={getHealthColor(networkHealth)} size="xs" mb="xs" />
+          <Group spacing="md" position="apart">
+            <Group spacing="xs">
+              <Text size="xs">Time:</Text>
+              <Badge size="xs" color="gray">{simulationTime}s</Badge>
+            </Group>
+            <Group spacing="xs">
+              <Text size="xs">Failures:</Text>
+              <Badge size="xs" color="red">{activeFailures.length}</Badge>
+            </Group>
+            <Group spacing="xs">
+              <Text size="xs">Nodes:</Text>
+              <Badge size="xs" color="blue">{topology.nodes.length}</Badge>
+            </Group>
+            <Group spacing="xs">
+              <Text size="xs">Links:</Text>
+              <Badge size="xs" color="green">{topology.edges.filter(e => e.status === 'active').length}</Badge>
+            </Group>
+          </Group>
+        </Card>
 
         {/* Analytics Dashboard */}
-        <Card>
-          <Text size="lg" weight="bold" mb="md">Network Analytics Dashboard</Text>
-          <Tabs defaultValue="metrics">
+        <Card style={{ padding: '6px', backgroundColor: '#1a1a1a', border: '1px solid #333' }}>
+          <Text size="xs" weight="bold" color="#00ff88" mb="xs">ANALYTICS</Text>
+          <Tabs defaultValue="topology">
             <Tabs.List>
-              <Tabs.Tab value="metrics" icon={<IconChartLine size={16} />}>Performance Metrics</Tabs.Tab>
-              <Tabs.Tab value="capacity" icon={<IconChartBar size={16} />}>Capacity Analysis</Tabs.Tab>
-              <Tabs.Tab value="faults" icon={<IconAlertTriangle size={16} />}>Fault Matrices</Tabs.Tab>
+              <Tabs.Tab value="topology" icon={<IconNetwork size={10} />} style={{ fontSize: '9px', padding: '4px 8px' }}>Topology</Tabs.Tab>
+              <Tabs.Tab value="metrics" icon={<IconChartLine size={10} />} style={{ fontSize: '9px', padding: '4px 8px' }}>Metrics</Tabs.Tab>
+              <Tabs.Tab value="capacity" icon={<IconChartBar size={10} />} style={{ fontSize: '9px', padding: '4px 8px' }}>Capacity</Tabs.Tab>
+              <Tabs.Tab value="faults" icon={<IconAlertTriangle size={10} />} style={{ fontSize: '9px', padding: '4px 8px' }}>Faults</Tabs.Tab>
             </Tabs.List>
 
-            <Tabs.Panel value="metrics" pt="md">
+            <Tabs.Panel value="topology" pt="sm">
+              <NetworkTopology />
+            </Tabs.Panel>
+
+            <Tabs.Panel value="metrics" pt="sm">
               <Grid>
                 <Grid.Col span={6}>
                   <SimplePlot 
@@ -731,27 +1283,186 @@ const ScheduleJobs = () => {
                   />
                 </Grid.Col>
               </Grid>
+              
+              {/* Dense Performance Metrics */}
+              <Grid mt="xs">
+                <Grid.Col span={6}>
+                  <Card style={{ backgroundColor: '#0f0f0f', border: '1px solid #444', padding: '6px' }}>
+                    <Text size="xs" weight="bold" mb="xs" color="#00ff88">PERFORMANCE</Text>
+                    <Stack spacing="xs">
+                      <Group position="apart">
+                        <Text size="xs">Avg Latency:</Text>
+                        <Text size="xs" color="green">{networkMetrics.latency.toFixed(1)}ms</Text>
+                      </Group>
+                      <Group position="apart">
+                        <Text size="xs">P95 Latency:</Text>
+                        <Text size="xs" color="yellow">{(networkMetrics.latency * 1.8).toFixed(1)}ms</Text>
+                      </Group>
+                      <Group position="apart">
+                        <Text size="xs">P99 Latency:</Text>
+                        <Text size="xs" color="red">{(networkMetrics.latency * 2.5).toFixed(1)}ms</Text>
+                      </Group>
+                      <Group position="apart">
+                        <Text size="xs">Jitter:</Text>
+                        <Text size="xs" color="cyan">{networkMetrics.jitter.toFixed(2)}ms</Text>
+                      </Group>
+                      <Group position="apart">
+                        <Text size="xs">Packet Loss:</Text>
+                        <Text size="xs" color="orange">{networkMetrics.packetLoss.toFixed(3)}%</Text>
+                      </Group>
+                    </Stack>
+                  </Card>
+                </Grid.Col>
+                
+                <Grid.Col span={6}>
+                  <Card style={{ backgroundColor: '#0f0f0f', border: '1px solid #444', padding: '6px' }}>
+                    <Text size="xs" weight="bold" mb="xs" color="#00ff88">THROUGHPUT</Text>
+                    <Stack spacing="xs">
+                      <Group position="apart">
+                        <Text size="xs">Current:</Text>
+                        <Text size="xs" color="green">{networkMetrics.throughput.toFixed(1)}%</Text>
+                      </Group>
+                      <Group position="apart">
+                        <Text size="xs">Peak:</Text>
+                        <Text size="xs" color="blue">98.7%</Text>
+                      </Group>
+                      <Group position="apart">
+                        <Text size="xs">Bandwidth Util:</Text>
+                        <Text size="xs" color="yellow">{networkMetrics.bandwidthUtilization.toFixed(1)}%</Text>
+                      </Group>
+                      <Group position="apart">
+                        <Text size="xs">Data Rate:</Text>
+                        <Text size="xs" color="cyan">{(networkMetrics.throughput * 12.5).toFixed(1)}Gbps</Text>
+                      </Group>
+                      <Group position="apart">
+                        <Text size="xs">Efficiency:</Text>
+                        <Text size="xs" color="green">{(networkMetrics.throughput / networkMetrics.bandwidthUtilization * 100).toFixed(1)}%</Text>
+                      </Group>
+                    </Stack>
+                  </Card>
+                </Grid.Col>
+                
+                <Grid.Col span={6}>
+                  <Card style={{ backgroundColor: '#0f0f0f', border: '1px solid #444', padding: '6px' }}>
+                    <Text size="xs" weight="bold" mb="xs" color="#00ff88">HEALTH</Text>
+                    <Stack spacing="xs">
+                      <Group position="apart">
+                        <Text size="xs">Connectivity:</Text>
+                        <Text size="xs" color="green">{networkMetrics.connectivity.toFixed(1)}%</Text>
+                      </Group>
+                      <Group position="apart">
+                        <Text size="xs">Fault Tolerance:</Text>
+                        <Text size="xs" color="blue">{networkMetrics.resilience.toFixed(2)}</Text>
+                      </Group>
+                      <Group position="apart">
+                        <Text size="xs">Availability:</Text>
+                        <Text size="xs" color="green">99.97%</Text>
+                      </Group>
+                      <Group position="apart">
+                        <Text size="xs">MTBF:</Text>
+                        <Text size="xs" color="cyan">2,847h</Text>
+                      </Group>
+                      <Group position="apart">
+                        <Text size="xs">MTTR:</Text>
+                        <Text size="xs" color="yellow">3.2min</Text>
+                      </Group>
+                    </Stack>
+                  </Card>
+                </Grid.Col>
+                
+                <Grid.Col span={6}>
+                  <Card style={{ backgroundColor: '#0f0f0f', border: '1px solid #444', padding: '6px' }}>
+                    <Text size="xs" weight="bold" mb="xs" color="#00ff88">AI METRICS</Text>
+                    <Stack spacing="xs">
+                      <Group position="apart">
+                        <Text size="xs">Prediction Accuracy:</Text>
+                        <Text size="xs" color="green">97.3%</Text>
+                      </Group>
+                      <Group position="apart">
+                        <Text size="xs">Response Time:</Text>
+                        <Text size="xs" color="blue">2.1ms</Text>
+                      </Group>
+                      <Group position="apart">
+                        <Text size="xs">False Positives:</Text>
+                        <Text size="xs" color="yellow">0.8%</Text>
+                      </Group>
+                      <Group position="apart">
+                        <Text size="xs">Model Confidence:</Text>
+                        <Text size="xs" color="cyan">94.7%</Text>
+                      </Group>
+                      <Group position="apart">
+                        <Text size="xs">Learning Rate:</Text>
+                        <Text size="xs" color="green">0.001</Text>
+                      </Group>
+                    </Stack>
+                  </Card>
+                </Grid.Col>
+              </Grid>
             </Tabs.Panel>
 
-            <Tabs.Panel value="capacity" pt="md">
+            <Tabs.Panel value="capacity" pt="sm">
               <Grid>
-                <Grid.Col span={8}>
+                <Grid.Col span={12}>
                   <CapacityPlot />
                 </Grid.Col>
-                <Grid.Col span={4}>
+                <Grid.Col span={12}>
                   <Stack spacing="md">
-                    <div style={{ textAlign: 'center' }}>
-                      <Text size="sm" weight="bold">Bandwidth Utilization</Text>
-                      <Text size="xl" color={getMetricColor(networkMetrics.bandwidthUtilization, 'bandwidth')}>
-                        {networkMetrics.bandwidthUtilization.toFixed(1)}%
-                      </Text>
-                    </div>
-                    <div style={{ textAlign: 'center' }}>
-                      <Text size="sm" weight="bold">Jitter</Text>
-                      <Text size="xl" color={getMetricColor(networkMetrics.jitter, 'jitter')}>
-                        {networkMetrics.jitter.toFixed(1)}ms
-                      </Text>
-                    </div>
+                    <Card style={{ backgroundColor: '#1a1a1a', border: '1px solid #333' }}>
+                      <Text size="sm" weight="bold" mb="sm">Bandwidth Metrics</Text>
+                      <Stack spacing="xs">
+                        <Group position="apart">
+                          <Text size="xs">Current Util:</Text>
+                          <Text size="xs" color={getMetricColor(networkMetrics.bandwidthUtilization, 'bandwidth')}>
+                            {networkMetrics.bandwidthUtilization.toFixed(1)}%
+                          </Text>
+                        </Group>
+                        <Group position="apart">
+                          <Text size="xs">Peak Util:</Text>
+                          <Text size="xs" color="red">94.2%</Text>
+                        </Group>
+                        <Group position="apart">
+                          <Text size="xs">Available:</Text>
+                          <Text size="xs" color="green">{(100 - networkMetrics.bandwidthUtilization).toFixed(1)}%</Text>
+                        </Group>
+                        <Group position="apart">
+                          <Text size="xs">Total Capacity:</Text>
+                          <Text size="xs" color="cyan">12.5Tbps</Text>
+                        </Group>
+                        <Group position="apart">
+                          <Text size="xs">Used Capacity:</Text>
+                          <Text size="xs" color="yellow">{(networkMetrics.bandwidthUtilization * 0.125).toFixed(2)}Tbps</Text>
+                        </Group>
+                      </Stack>
+                    </Card>
+                    
+                    <Card style={{ backgroundColor: '#1a1a1a', border: '1px solid #333' }}>
+                      <Text size="sm" weight="bold" mb="sm">Quality Metrics</Text>
+                      <Stack spacing="xs">
+                        <Group position="apart">
+                          <Text size="xs">Jitter:</Text>
+                          <Text size="xs" color={getMetricColor(networkMetrics.jitter, 'jitter')}>
+                            {networkMetrics.jitter.toFixed(2)}ms
+                          </Text>
+                        </Group>
+                        <Group position="apart">
+                          <Text size="xs">MOS Score:</Text>
+                          <Text size="xs" color="green">4.7</Text>
+                        </Group>
+                        <Group position="apart">
+                          <Text size="xs">R-Factor:</Text>
+                          <Text size="xs" color="blue">87.3</Text>
+                        </Group>
+                        <Group position="apart">
+                          <Text size="xs">Packet Delay:</Text>
+                          <Text size="xs" color="cyan">{(networkMetrics.latency + networkMetrics.jitter).toFixed(1)}ms</Text>
+                        </Group>
+                        <Group position="apart">
+                          <Text size="xs">Buffer Utilization:</Text>
+                          <Text size="xs" color="yellow">23.4%</Text>
+                        </Group>
+                      </Stack>
+                    </Card>
+                    
                     <SimplePlot 
                       data={historicalData.bandwidthUtilization} 
                       title="Bandwidth Trend" 
@@ -764,12 +1475,12 @@ const ScheduleJobs = () => {
               </Grid>
             </Tabs.Panel>
 
-            <Tabs.Panel value="faults" pt="md">
+            <Tabs.Panel value="faults" pt="sm">
               <Grid>
-                <Grid.Col span={6}>
+                <Grid.Col span={12}>
                   <FaultMatrixPlot />
                 </Grid.Col>
-                <Grid.Col span={6}>
+                <Grid.Col span={12}>
                   <Stack spacing="md">
                     <div style={{ textAlign: 'center' }}>
                       <Text size="sm" weight="bold">Active Failures</Text>
@@ -801,23 +1512,26 @@ const ScheduleJobs = () => {
         </Card>
 
         {/* Console Logs */}
-        <Card>
-          <Text size="lg" weight="bold" mb="md">Network Operations Console</Text>
-          <div style={{ 
-            height: '300px', 
-            overflowY: 'auto', 
-            backgroundColor: '#0a0a0a', 
-            padding: '12px', 
-            borderRadius: '4px',
-            fontFamily: 'monospace',
-            fontSize: '12px'
-          }}>
+        <Card style={{ padding: '6px' }}>
+          <Text size="sm" weight="bold" mb="xs" color="#00ff88">NETWORK OPERATIONS CONSOLE</Text>
+          <div 
+            ref={consoleRef}
+            style={{ 
+              height: '200px', 
+              overflowY: 'auto', 
+              backgroundColor: '#0a0a0a', 
+              padding: '8px', 
+              borderRadius: '4px',
+              fontFamily: 'monospace',
+              fontSize: '11px'
+            }}>
             {consoleLogs.length === 0 ? (
               <Text size="sm" color="dimmed">Console ready... Start simulation to see network operations.</Text>
             ) : (
               consoleLogs.map(log => (
                 <div key={log.id} style={{ 
-                  marginBottom: '4px',
+                  marginBottom: '2px',
+                  lineHeight: '1.2',
                   color: log.type === 'error' ? '#ff6b6b' : 
                          log.type === 'warning' ? '#ffd93d' : 
                          log.type === 'success' ? '#6bcf7f' : '#ffffff'
